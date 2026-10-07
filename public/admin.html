@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agua Planeta · Administración</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#1468ff">
+<meta name="theme-color" content="#14213d">
 <link rel="icon" href="/assets/icon.png">
 <link rel="apple-touch-icon" href="/assets/icon-192.png">
 <link rel="manifest" href="/admin-manifest.json">
@@ -13,18 +13,18 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Archivo:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1238c9;--red:#ff2e7e;--cream:#eef8fa;--aqua:#00d4c8;--violet:#7b2ff7;--sun:#ffd23f;--paper:#fff;--ink:#14163a;--muted:#646b8f;--line:#d9e6ee;--ok:#1d8a4e;--wa:#1fa855;--warn:#c27a00}
+:root{--navy:#14213d;--red:#d62839;--cream:#f4f5f8;--aqua:#00a8b8;--violet:#22345e;--sun:#ffd23f;--paper:#fff;--ink:#14163a;--muted:#646b8f;--line:#d9e6ee;--ok:#1d8a4e;--wa:#1fa855;--warn:#c27a00}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-html,body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.45 "DM Sans",system-ui,sans-serif}
+html,body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.45 "Archivo",system-ui,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 img{display:block;max-width:100%}
 .varsity{font-family:"Baloo 2",sans-serif;font-weight:800}
-.stripe{height:5px;background:linear-gradient(90deg,var(--aqua),#1468ff,var(--violet),var(--red),var(--sun))}
-header{background:linear-gradient(110deg,#1468ff,var(--violet));color:#fff;position:sticky;top:0;z-index:30}
+.stripe{height:4px;background:var(--red)}
+header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:30}
 .hd{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
 .hd .varsity{font-size:22px}
 .hd small{opacity:.7}
@@ -39,8 +39,9 @@ nav.tabs .b{background:var(--red);color:#fff;border-radius:999px;font-size:11px;
 main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 .panel{display:none}.panel.on{display:block}
 .card{background:var(--paper);border-radius:14px;box-shadow:0 1px 2px rgba(11,34,82,.06),0 6px 18px rgba(11,34,82,.06);padding:16px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}}
 .stat{background:#fff;border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
 .stat b{display:block;font-size:22px;color:var(--navy)}
 .stat span{font-size:12px;color:var(--muted);font-weight:600}
@@ -50,7 +51,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 .tools input{flex:1;min-width:180px;width:auto}
 .tools select{width:auto}
 .btn{border:0;border-radius:11px;padding:11px 16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;white-space:nowrap}
-.btn.p{background:linear-gradient(135deg,#1468ff,var(--violet));color:#fff}
+.btn.p{background:var(--navy);color:#fff}
 .btn.r{background:var(--red);color:#fff}
 .btn.g{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
 .btn.w{background:var(--wa);color:#fff}
@@ -63,7 +64,20 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 .item .ref{font-size:12px;font-weight:700;color:var(--red)}
 .item .m{font-size:13px;color:var(--muted);margin-top:2px}
 .item .acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
-.item.sold{opacity:.6}
+.item.sold{opacity:.75}
+.toggles{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px}
+.tg{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;color:var(--navy)}
+.tg.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tg.on.red{background:var(--red);border-color:var(--red)}
+.tg.on.aqua{background:#00a8b8;border-color:#00a8b8}
+.helpbox h4{margin:16px 0 6px;color:var(--navy)}
+.helpbox ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.colors{display:flex;gap:6px;flex-wrap:wrap}
+.colors button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;color:var(--navy)}
+.colors button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.addrow{display:flex;gap:8px}
+.addph2{display:flex;flex-direction:column;gap:6px}
+.addph2 label{width:92px;height:58px;border-radius:10px;border:2px dashed var(--line);display:grid;place-items:center;text-align:center;color:var(--navy);font-weight:700;font-size:12px;background:#faf8f3;cursor:pointer}
 @media(max-width:560px){.item{grid-template-columns:64px minmax(0,1fr)}.item img{width:64px;height:86px}.item .acts{grid-column:1/-1;flex-direction:row;justify-content:flex-end}.pin input{width:110px}}
 .item.hid{opacity:.55;border-style:dashed}
 .pin{display:flex;align-items:center;gap:6px;margin-top:6px}
@@ -149,7 +163,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 .st-new{background:#fff4d6;color:#7a5600}.st-confirmed{background:#e2f3e9;color:var(--ok)}.st-cancelled{background:#eceef4;color:var(--muted)}
 
 /* login */
-.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(125deg,#00d4c8,#1468ff 45%,#7b2ff7 80%,#ff2e7e)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:var(--navy) url(/assets/banner.jpg) center/cover}
 .login .card{width:100%;max-width:360px;display:grid;gap:12px;text-align:center}
 .login img{height:70px;margin:0 auto;border-radius:10px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.25s;z-index:90;pointer-events:none;max-width:90vw;text-align:center}
@@ -173,7 +187,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 
 <div id="app" hidden>
   <div class="stripe"></div>
-  <header><div class="hd"><img src="/assets/logo.jpg" alt="USA2" style="height:30px;border-radius:6px;border:2px solid #fff"><span class="varsity">Agua Planeta</span><small>Administración</small><span class="sp"></span><a href="/" target="_blank">Ver tienda</a><button id="logout">Salir</button></div></header>
+  <header><div class="hd"><img src="/assets/logo.jpg" alt="USA2" style="height:30px;border-radius:6px;border:2px solid #fff"><span class="varsity">Agua Planeta</span><small>Administración</small><span class="sp"></span><button id="helpOpen" aria-label="Ayuda">? Ayuda</button><a href="/" target="_blank">Ver tienda</a><button id="logout">Salir</button></div></header>
   <nav class="tabs"><div class="in">
     <button data-tab="products" class="on">Catálogo</button>
     <button data-tab="bulk">＋ Llegó mercancía</button>
@@ -187,7 +201,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
       <div class="tools">
         <input id="fq" placeholder="Buscar por nombre o referencia…">
         <select id="fcat"></select>
-        <select id="fst"><option value="">Todos</option><option value="available">Disponibles</option><option value="sold">Vendidos</option><option value="hidden">Ocultos</option><option value="noprice">Sin precio</option></select>
+        <select id="fst"><option value="">Todos</option><option value="available">Disponibles</option><option value="sold">Vendidos</option><option value="hidden">Ocultos</option><option value="noprice">Sin precio</option><option value="offer">En oferta</option><option value="new">Marcadas como nuevas</option></select>
         <button class="btn r" id="newBtn">＋ Nueva prenda</button>
       </div>
       <div class="list" id="plist"><div class="empty">Cargando…</div></div>
@@ -208,7 +222,8 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
         <div class="bgopt"><label class="switch"><input type="checkbox" id="bBgOn"> Quitar fondo a todas las fotos</label>
           <select id="bBg" class="in" style="width:auto;padding:8px 10px"></select></div>
         <div class="help" id="bBgHelp" style="margin-top:-6px">Deja la prenda sobre un fondo limpio. Es más lento: unos segundos por foto.</div>
-        <label class="drop" id="drop"><input type="file" id="bFiles" accept="image/*" multiple hidden><b>📷 Toca para elegir fotos</b><div class="help">o arrástralas aquí · puedes tomar fotos con la cámara</div></label>
+        <div class="two"><label class="drop" for="bCam"><b>📷 Tomar foto</b><div class="help">con la cámara</div></label><label class="drop" id="drop"><input type="file" id="bFiles" accept="image/*" multiple hidden><b>🖼️ Elegir de la galería</b><div class="help">puedes elegir varias a la vez</div></label></div>
+        <input type="file" id="bCam" accept="image/*" capture="environment" hidden>
       </div>
       <div class="bulk" id="bulkList"></div>
     </section>
@@ -234,6 +249,9 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
         <div class="f"><label>Anuncio (barra superior)</label><input name="announcement" placeholder="Ej: ¡Nueva mercancía cada semana!"></div>
         <div class="f"><label>Métodos de pago (separados por /)</label><input name="paymentInfo"></div>
         <div class="f"><label>Información de envíos</label><textarea name="shippingInfo" rows="2"></textarea></div>
+        <div class="f"><label>Dirección para recoger en tienda</label><input name="pickupInfo" placeholder="Ej: Calle 10 #5-20, Tunja · Lunes a sábado 9 a 6"></div>
+        <div class="f"><label>Ayuda: cambios de prendas</label><textarea name="faqChanges" rows="2"></textarea></div>
+        <div class="f"><label>Ayuda: tallas</label><textarea name="faqSizes" rows="2"></textarea></div>
         <div class="f"><label>Categorías</label><div class="chipsed" id="catChips"></div><div class="szrow"><input id="newCat" placeholder="Nueva categoría" style="flex:1;width:auto"><button type="button" class="btn g sm" id="addCat">Agregar</button></div></div>
         <div class="f"><label>Tallas rápidas</label><div class="chipsed" id="sizeChips"></div><div class="szrow"><input id="newSize" placeholder="Ej: 28, 30, Única" style="flex:1;width:auto"><button type="button" class="btn g sm" id="addSize">Agregar</button></div></div>
         <label class="switch"><input type="checkbox" name="watermark"> Poner el logo USA2 en las fotos nuevas</label>
@@ -245,6 +263,42 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
   <div class="sticky-save" id="bulkBar"><div class="in"><b id="bulkInfo"></b><div class="progress" id="bulkProg" hidden><i></i></div><button class="btn g" id="bulkClear">Vaciar</button><button class="btn r" id="bulkSave">Publicar todo</button></div></div>
 </div>
 
+<!-- ayuda del panel -->
+<div class="ov" id="hOv"><div class="md">
+  <div class="md-h"><h3>Ayuda del panel</h3><button class="x" data-close="hOv">✕</button></div>
+  <div class="md-b helpbox">
+    <div><h4>📦 Subir una prenda</h4><ol>
+      <li>En <b>Catálogo</b> toca <b>＋ Nueva prenda</b>.</li>
+      <li>Toca <b>📷 Cámara</b> para tomar la foto o <b>🖼️ Galería</b> para elegirla. Puedes poner varias; la primera es la portada.</li>
+      <li>La foto se mejora sola. Tócala si quieres ajustarla o quitarle el fondo.</li>
+      <li>Escribe nombre, precio, talla, colores y estado, y toca <b>Guardar</b>.</li>
+    </ol></div>
+    <div><h4>🛍️ Llegó mucha mercancía</h4><ol>
+      <li>Ve a <b>＋ Llegó mercancía</b> y elige todas las fotos a la vez.</li>
+      <li>A cada prenda ponle nombre, precio y talla.</li>
+      <li>Toca <b>Publicar todo</b>.</li>
+    </ol></div>
+    <div><h4>💲 Cambiar un precio</h4><ol>
+      <li>En la lista, toca el recuadro del precio, escribe el nuevo valor y toca afuera. Se guarda solo.</li>
+      <li>Las prendas sin precio no aparecen en la tienda.</li>
+    </ol></div>
+    <div><h4>🚫 Marcar agotado</h4><ol>
+      <li>Toca <b>Agotado</b> debajo de la prenda. Vuelve a tocarlo si la prenda regresa.</li>
+      <li>Si un cliente pidió por WhatsApp, en <b>Pedidos</b> toca <b>Confirmar venta</b> y se marca sola.</li>
+    </ol></div>
+    <div><h4>🔥 Publicar una oferta</h4><ol>
+      <li>Toca <b>Oferta</b> debajo de la prenda y escribe el precio rebajado.</li>
+      <li>En la tienda se ve el precio anterior tachado y aparece en <b>Ofertas</b>.</li>
+      <li>Para quitarla, toca otra vez <b>Oferta</b>.</li>
+    </ol></div>
+    <div><h4>Otros atajos</h4><ol>
+      <li><b>Nuevo</b>: muestra la etiqueta "Nuevo" en la tienda.</li>
+      <li><b>Ocultar</b>: la quita de la tienda sin borrarla.</li>
+      <li><b>Duplicar</b>: crea una copia para subir rápido una prenda parecida.</li>
+    </ol></div>
+  </div>
+</div></div>
+
 <!-- editor de prenda -->
 <div class="ov" id="pOv"><div class="md">
   <div class="md-h"><h3 id="pTitle">Prenda</h3><button class="x" data-close="pOv">✕</button></div>
@@ -252,6 +306,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
     <div class="f"><label>Fotos <span style="text-transform:none;font-weight:500">(la primera es la portada · toca una para ajustarla)</span></label>
       <div class="photos" id="pPhotos"></div>
       <input type="file" id="pFiles" accept="image/*" multiple hidden>
+      <input type="file" id="pCam" accept="image/*" capture="environment" hidden>
     </div>
     <div class="two">
       <div class="f"><label>Referencia</label><input id="pRef" placeholder="Automática"></div>
@@ -259,8 +314,8 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
     </div>
     <div class="f"><label>Nombre</label><input id="pName" placeholder="Ej: Buzo con capota azul"></div>
     <div class="two">
-      <div class="f"><label>Precio</label><input id="pPrice" inputmode="numeric" placeholder="Ej: 45000"></div>
-      <div class="f"><label>Precio antes (oferta)</label><input id="pOld" inputmode="numeric" placeholder="Opcional"></div>
+      <div class="f"><label>Precio normal</label><input id="pPrice" inputmode="numeric" placeholder="Ej: 45000"></div>
+      <div class="f"><label>Precio de oferta</label><input id="pOld" inputmode="numeric" placeholder="Opcional"></div>
     </div>
     <div class="f"><label>Tallas y cantidades</label>
       <div class="quick-sizes" id="pQuick"></div>
@@ -270,8 +325,17 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
       <div class="f"><label>Para</label><select id="pGender"><option value="">—</option><option>Mujer</option><option>Hombre</option><option>Unisex</option><option>Niños</option></select></div>
       <div class="f"><label>Marca</label><input id="pBrand" placeholder="Opcional"></div>
     </div>
-    <div class="f"><label>Descripción</label><textarea id="pDesc" rows="3" placeholder="Estado, material, medidas…"></textarea></div>
-    <div class="f"><label>Estado</label><div class="seg" id="pStatus"><button data-s="available">Disponible</button><button data-s="sold">Vendida</button><button data-s="hidden">Oculta</button></div></div>
+    <div class="two">
+      <div class="f"><label>Estado de la prenda</label><select id="pCond"><option value="">—</option><option value="nuevo">Nueva (con etiqueta)</option><option value="como-nuevo">Como nueva</option><option value="buen-estado">Buen estado</option></select></div>
+      <div class="f"><label>Medidas</label><input id="pMeas" placeholder="Ej: Largo 65 cm · Pecho 52 cm"></div>
+    </div>
+    <div class="f"><label>Colores <span style="text-transform:none;font-weight:500">(toca para marcar)</span></label>
+      <div class="colors" id="pColors"></div>
+      <div class="addrow"><input id="pColorNew" class="in" placeholder="Otro color" style="flex:1"><button type="button" class="btn g sm" id="pColorAdd">Agregar</button></div>
+    </div>
+    <div class="f"><label>Descripción</label><textarea id="pDesc" rows="3" placeholder="Material, detalles, cómo le queda…"></textarea></div>
+    <div class="f"><label>Estado</label><div class="seg" id="pStatus"><button data-s="available">Disponible</button><button data-s="sold">Agotada</button><button data-s="hidden">Oculta</button></div></div>
+    <label class="switch"><input type="checkbox" id="pNew"> Mostrar etiqueta "Nuevo"</label>
     <label class="switch"><input type="checkbox" id="pFeat"> Destacar al inicio</label>
   </div>
   <div class="md-f"><button class="btn g" id="pDel">Eliminar</button><button class="btn p" id="pSave">Guardar</button></div>
@@ -371,14 +435,16 @@ function renderProducts(){
   const av = PRODUCTS.filter(p=>p.status==="available" && totalStock(p)>0);
   const value = av.reduce((a,p)=>a+p.price*totalStock(p),0);
   $("#stats").innerHTML = `
-    <div class="stat"><b>${av.length}</b><span>Disponibles</span></div>
-    <div class="stat"><b>${PRODUCTS.filter(p=>p.status==="sold"||totalStock(p)===0).length}</b><span>Vendidas</span></div>
+    <div class="stat"><b>${PRODUCTS.length}</b><span>Total de prendas</span></div>
+    <div class="stat"><b>${av.filter(p=>p.price).length}</b><span>Visibles en la tienda</span></div>
+    <div class="stat"><b>${PRODUCTS.filter(p=>p.status==="sold"||totalStock(p)===0).length}</b><span>Agotadas</span></div>
+    <div class="stat"><b>${PRODUCTS.filter(isOffer).length}</b><span>En oferta</span></div>
     <div class="stat"><b>${PRODUCTS.filter(p=>!p.price).length}</b><span>Sin precio (no se ven)</span></div>
-    <div class="stat"><b>${fmt(value)||"$0"}</b><span>Valor en inventario</span></div>`;
+    <div class="stat"><b>${fmt(value)||"$0"}</b><span>Valor disponible</span></div>`;
   const q = $("#fq").value.trim().toLowerCase(), c = $("#fcat").value, st = $("#fst").value;
   const list = PRODUCTS.filter(p =>
-    (!q || (p.name+" "+p.ref).toLowerCase().includes(q)) && (!c || p.category===c) &&
-    (!st || (st==="noprice" ? !p.price : st==="sold" ? (p.status==="sold"||totalStock(p)===0) : st==="available" ? (p.status==="available"&&totalStock(p)>0) : p.status===st)));
+    (!q || (p.name+" "+p.ref+" "+(p.brand||"")+" "+p.sizes.map(s=>s.size).join(" ")).toLowerCase().includes(q)) && (!c || p.category===c) &&
+    (!st || (st==="offer" ? isOffer(p) : st==="new" ? !!p.isNew : st==="noprice" ? !p.price : st==="sold" ? (p.status==="sold"||totalStock(p)===0) : st==="available" ? (p.status==="available"&&totalStock(p)>0) : p.status===st)));
   if (!list.length){ $("#plist").innerHTML = `<div class="empty">No hay prendas aquí.</div>`; return; }
   $("#plist").innerHTML = list.map(p => {
     const sold = p.status==="sold" || totalStock(p)===0;
@@ -388,11 +454,17 @@ function renderProducts(){
         <div class="ref">${esc(p.ref)} · ${esc(p.category)}</div>
         <div class="t">${esc(p.name)}</div>
         <div class="m">Tallas: ${p.sizes.map(s=>`${esc(s.size)}${s.stock!==1?` (${s.stock})`:""}`).join(", ")||"—"}</div>
-        <div class="pin"><input data-price="${p.id}" inputmode="numeric" value="${p.price?Number(p.price).toLocaleString("es-CO"):""}" placeholder="Poner precio"><span class="tag ${p.status==="hidden"||!p.price?"hi":sold?"so":"av"}">${p.status==="hidden"?"Oculta":sold?"Vendida":!p.price?"No visible: falta precio":"Disponible"}</span></div>
+        <div class="pin"><input data-price="${p.id}" inputmode="numeric" value="${p.price?Number(p.price).toLocaleString("es-CO"):""}" placeholder="Poner precio"><span class="tag ${p.status==="hidden"||!p.price?"hi":sold?"so":"av"}">${p.status==="hidden"?"Oculta":sold?"Agotada":!p.price?"No visible: falta precio":"Visible"}</span>${isOffer(p)?`<span class="tag so">Antes ${fmt(p.oldPrice)}</span>`:""}</div>
       </div>
       <div class="acts">
         <button class="btn g sm" data-edit="${p.id}">Editar</button>
-        ${sold ? `<button class="btn g sm" data-restock="${p.id}">Reactivar</button>` : `<button class="btn g sm" data-sold="${p.id}">Vendida</button>`}
+      </div>
+      <div class="toggles">
+        <button class="tg ${sold?"on red":""}" data-tg="sold" data-id="${p.id}">${sold?"✓ Agotado":"Agotado"}</button>
+        <button class="tg ${p.isNew?"on aqua":""}" data-tg="new" data-id="${p.id}">${p.isNew?"✓ Nuevo":"Nuevo"}</button>
+        <button class="tg ${isOffer(p)?"on red":""}" data-tg="offer" data-id="${p.id}">${isOffer(p)?"✓ Oferta":"Oferta"}</button>
+        <button class="tg ${p.status==="hidden"?"on":""}" data-tg="hide" data-id="${p.id}">${p.status==="hidden"?"✓ Oculta":"Ocultar"}</button>
+        <button class="tg" data-tg="dup" data-id="${p.id}">Duplicar</button>
       </div>
     </div>`;
   }).join("");
@@ -401,10 +473,8 @@ function renderProducts(){
 
 $("#plist").addEventListener("click", async e => {
   const ed = e.target.closest("[data-edit]"); if (ed) return openEditor(PRODUCTS.find(p=>p.id===ed.dataset.edit));
-  const so = e.target.closest("[data-sold]");
-  if (so) return quickUpdate(so.dataset.sold, {status:"sold"}, "Marcada como vendida");
-  const rs = e.target.closest("[data-restock]");
-  if (rs){ const p = PRODUCTS.find(x=>x.id===rs.dataset.restock); const sizes = p.sizes.map(s=>({...s, stock: Math.max(1,s.stock)})); return quickUpdate(p.id, {status:"available", sizes}, "Disponible de nuevo"); }
+  const tg = e.target.closest("[data-tg]");
+  if (tg) return toggleQuick(tg.dataset.tg, PRODUCTS.find(x=>x.id===tg.dataset.id));
   const it = e.target.closest(".item"); if (it && !e.target.closest("input,button")) openEditor(PRODUCTS.find(p=>p.id===it.dataset.id));
 });
 $("#plist").addEventListener("change", e => {
@@ -414,6 +484,31 @@ $("#plist").addEventListener("change", e => {
 });
 $("#plist").addEventListener("keydown", e => { if (e.key==="Enter" && e.target.matches("[data-price]")) e.target.blur(); });
 
+const isOffer = p => p.oldPrice > p.price && p.price > 0;
+async function toggleQuick(kind, p){
+  const sold = p.status==="sold" || totalStock(p)===0;
+  if (kind==="sold"){
+    if (sold) return quickUpdate(p.id, {status:"available", sizes:p.sizes.map(s=>({...s, stock:Math.max(1,s.stock)}))}, "Disponible de nuevo");
+    return quickUpdate(p.id, {status:"sold"}, "Marcada como agotada");
+  }
+  if (kind==="new") return quickUpdate(p.id, {isNew:!p.isNew}, p.isNew?"Ya no sale como nueva":"Marcada como nueva");
+  if (kind==="hide") return quickUpdate(p.id, {status:p.status==="hidden"?(totalStock(p)?"available":"sold"):"hidden"}, p.status==="hidden"?"Visible otra vez":"Oculta (no se borró)");
+  if (kind==="offer"){
+    if (isOffer(p)) return quickUpdate(p.id, {price:p.oldPrice, oldPrice:0}, "Oferta quitada: vuelve a "+fmt(p.oldPrice));
+    if (!p.price) return toast("Primero ponle precio a la prenda");
+    const v = money(prompt(`Precio de oferta para ${p.name}\n(precio normal: ${fmt(p.price)})`, "")||"");
+    if (!v) return;
+    if (v >= p.price) return toast("La oferta debe ser menor que "+fmt(p.price));
+    return quickUpdate(p.id, {oldPrice:p.price, price:v}, `En oferta: ${fmt(v)} (antes ${fmt(p.price)})`);
+  }
+  if (kind==="dup"){
+    try{
+      const {id, ref, createdAt, updatedAt, ...rest} = p;
+      const d = await api("admin/products",{method:"POST", body:JSON.stringify({...rest, name:p.name+" (copia)", status:"available", sizes:p.sizes.map(s=>({...s, stock:Math.max(1,s.stock)}))})});
+      PRODUCTS = [...d.products, ...PRODUCTS]; renderProducts(); toast(`Copia creada: ${d.products[0].ref}`); openEditor(d.products[0]);
+    }catch(err){ if (err.message!=="401") toast(err.message); }
+  }
+}
 async function quickUpdate(id, patch, msg){
   try{
     const d = await api("admin/products/"+id, {method:"PUT", body:JSON.stringify(patch)});
@@ -518,31 +613,43 @@ $("#eApply").onclick = async () => {
 let P = null; // borrador
 function openEditor(p){
   const isNew = !p;
-  P = p ? JSON.parse(JSON.stringify(p)) : { ref:"", name:"", category: SETTINGS.categories?.[0]||"Buzos", price:0, oldPrice:0, sizes:[], photos:[], description:"", gender:"", brand:"", status:"available", featured:false };
+  P = p ? JSON.parse(JSON.stringify(p)) : { ref:"", name:"", category: SETTINGS.categories?.[0]||"Buzos", price:0, oldPrice:0, sizes:[], photos:[], description:"", gender:"", brand:"", status:"available", featured:false, isNew:true, colors:[], condition:"", measures:"" };
   P._isNew = isNew;
   P._photos = (P.photos||[]).map(url=>({url, thumb:url, dirty:false}));
   $("#pTitle").textContent = isNew ? "Nueva prenda" : P.ref;
   $("#pRef").value = P.ref; $("#pCat").value = P.category; $("#pName").value = P.name;
   if (![...$("#pCat").options].some(o=>o.value===P.category)) $("#pCat").insertAdjacentHTML("beforeend", `<option>${esc(P.category)}</option>`), $("#pCat").value=P.category;
-  $("#pPrice").value = P.price ? Number(P.price).toLocaleString("es-CO") : ""; $("#pOld").value = P.oldPrice ? Number(P.oldPrice).toLocaleString("es-CO") : "";
+  const offer = isOffer(P);
+  const normal = offer ? P.oldPrice : P.price;
+  $("#pPrice").value = normal ? Number(normal).toLocaleString("es-CO") : ""; $("#pOld").value = offer ? Number(P.price).toLocaleString("es-CO") : "";
+  $("#pCond").value = P.condition||""; $("#pMeas").value = P.measures||""; $("#pNew").checked = !!P.isNew;
+  P.colors = [...(P.colors||[])]; drawColors();
   $("#pGender").value = P.gender||""; $("#pBrand").value = P.brand||""; $("#pDesc").value = P.description||""; $("#pFeat").checked = !!P.featured;
   $("#pDel").hidden = isNew;
   drawPhotos(); drawSizes(); drawStatus();
   $("#pOv").classList.add("on");
-  if (isNew) setTimeout(()=>$("#pFiles").click(), 150);
+
 }
 function drawPhotos(){
   $("#pPhotos").innerHTML = P._photos.map((ph,i)=>`
     <div class="pt ${i?"":"first"}" data-i="${i}"><img src="${esc(ph.thumb)}" alt="">
       ${ph.loading?`<div class="spin">Editando…</div>`:""}
       <div class="ops">${i?`<button data-first="${i}" title="Portada">★</button>`:"<span></span>"}<button data-rmph="${i}">✕</button></div>
-    </div>`).join("") + `<label class="addph" for="pFiles">＋<br>Agregar<br>fotos</label>`;
+    </div>`).join("") + `<div class="addph2"><label for="pCam">📷 Cámara</label><label for="pFiles">🖼️ Galería</label></div>`;
 }
 $("#pPhotos").addEventListener("click", e => {
   const rm = e.target.closest("[data-rmph]"); if (rm){ P._photos.splice(Number(rm.dataset.rmph),1); return drawPhotos(); }
   const f = e.target.closest("[data-first]"); if (f){ const [x]=P._photos.splice(Number(f.dataset.first),1); P._photos.unshift(x); return drawPhotos(); }
   const t = e.target.closest(".pt"); if (t){ const it=P._photos[Number(t.dataset.i)]; if(!it.loading) openPhotoEditor(it, drawPhotos); }
 });
+const COLOR_SUGG = ["Negro","Blanco","Gris","Azul","Azul oscuro","Rojo","Verde","Beige","Café","Rosado","Morado","Amarillo","Estampado"];
+function drawColors(){
+  const all = [...new Set([...COLOR_SUGG, ...P.colors])];
+  $("#pColors").innerHTML = all.map(c=>`<button type="button" data-col="${esc(c)}" class="${P.colors.includes(c)?"on":""}">${esc(c)}</button>`).join("");
+}
+$("#pColors").onclick = e => { const b=e.target.closest("[data-col]"); if(!b) return; const c=b.dataset.col; P.colors = P.colors.includes(c) ? P.colors.filter(x=>x!==c) : [...P.colors, c]; drawColors(); };
+$("#pColorAdd").onclick = () => { const v=$("#pColorNew").value.trim(); if (v && !P.colors.includes(v)) P.colors.push(v); $("#pColorNew").value=""; drawColors(); };
+$("#pCam").onchange = e => $("#pFiles").onchange(e);
 $("#pFiles").onchange = async e => {
   const files = [...e.target.files]; e.target.value = "";
   for (const file of files){
@@ -572,6 +679,7 @@ $("#pStatus").onclick = e => { const b=e.target.closest("[data-s]"); if(b){ P.st
 
 $("#pSave").onclick = async () => {
   if (!P._photos.length) return toast("Agrega al menos una foto");
+  if (money($("#pOld").value) && money($("#pOld").value) >= money($("#pPrice").value)) return toast("El precio de oferta debe ser menor que el precio normal");
   if (P._photos.some(p=>p.loading)) return toast("Espera, se están editando las fotos…");
   if (!P.sizes.length) return toast("Elige al menos una talla");
   const btn = $("#pSave"); btn.disabled = true;
@@ -579,8 +687,11 @@ $("#pSave").onclick = async () => {
     const photos = [];
     for (let i=0;i<P._photos.length;i++){ btn.textContent = `Subiendo foto ${i+1}/${P._photos.length}…`; photos.push(await uploadPhoto(P._photos[i])); }
     btn.textContent = "Guardando…";
-    const body = { ref:$("#pRef").value.trim(), name:$("#pName").value.trim()||"Prenda", category:$("#pCat").value, price:money($("#pPrice").value), oldPrice:money($("#pOld").value),
-      sizes:P.sizes, photos, description:$("#pDesc").value, gender:$("#pGender").value, brand:$("#pBrand").value, status:P.status, featured:$("#pFeat").checked };
+    const normal = money($("#pPrice").value), offerP = money($("#pOld").value);
+    const body = { ref:$("#pRef").value.trim(), name:$("#pName").value.trim()||"Prenda", category:$("#pCat").value,
+      price: offerP && offerP < normal ? offerP : normal, oldPrice: offerP && offerP < normal ? normal : 0,
+      sizes:P.sizes, photos, description:$("#pDesc").value, gender:$("#pGender").value, brand:$("#pBrand").value, status:P.status, featured:$("#pFeat").checked,
+      isNew:$("#pNew").checked, colors:P.colors, condition:$("#pCond").value, measures:$("#pMeas").value };
     if (P._isNew){ const d = await api("admin/products",{method:"POST", body:JSON.stringify(body)}); PRODUCTS = [...d.products, ...PRODUCTS]; toast(`Publicada como ${d.products[0].ref} ✓`); }
     else { const d = await api("admin/products/"+P.id,{method:"PUT", body:JSON.stringify(body)}); PRODUCTS = PRODUCTS.map(p=>p.id===P.id?d.product:p); toast("Cambios guardados ✓"); }
     $("#pOv").classList.remove("on"); fillSelects(); renderProducts();
@@ -593,6 +704,7 @@ $("#pDel").onclick = async () => {
   catch(e){ if (e.message!=="401") toast(e.message); }
 };
 $("#newBtn").onclick = () => openEditor(null);
+$("#helpOpen").onclick = () => $("#hOv").classList.add("on");
 $$("[data-close]").forEach(b => b.addEventListener("click", () => $("#"+b.dataset.close).classList.remove("on")));
 
 // ---------- llegó mercancía (carga masiva) ----------
@@ -607,6 +719,7 @@ drop.addEventListener("dragover", e => { e.preventDefault(); drop.style.borderCo
 drop.addEventListener("dragleave", () => drop.style.borderColor="");
 drop.addEventListener("drop", e => { e.preventDefault(); drop.style.borderColor=""; addBulk([...e.dataTransfer.files].filter(f=>f.type.startsWith("image/"))); });
 $("#bFiles").onchange = e => { addBulk([...e.target.files]); e.target.value=""; };
+$("#bCam").onchange = e => { addBulk([...e.target.files]); e.target.value=""; };
 
 async function addBulk(files){
   if (!files.length) return;
@@ -666,7 +779,7 @@ $("#bulkSave").onclick = async () => {
     for (const r of BULK){
       const photos = [];
       for (const ph of r.photos){ photos.push(await uploadPhoto(ph)); done++; bar.firstElementChild.style.width = (done/total*100)+"%"; btn.textContent = `Subiendo ${done}/${total}`; }
-      out.push({ name: r.name.trim() || `${r.category.replace(/s$/,"")} talla ${r.size}`, category:r.category, price:r.price, sizes:[{size:r.size, stock:r.stock}], photos, status:"available" });
+      out.push({ name: r.name.trim() || `${r.category.replace(/s$/,"")} talla ${r.size}`, category:r.category, price:r.price, sizes:[{size:r.size, stock:r.stock}], photos, status:"available", isNew:true });
     }
     btn.textContent = "Publicando…";
     const d = await api("admin/products",{method:"POST", body:JSON.stringify(out)});
@@ -715,7 +828,7 @@ $("#olist").addEventListener("click", async e => {
 let setCats = [], setSizes = [];
 function fillSettings(){
   const f = $("#setForm");
-  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo"].forEach(k => f[k].value = SETTINGS[k]||"");
+  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo","pickupInfo","faqChanges","faqSizes"].forEach(k => f[k].value = SETTINGS[k]||"");
   if (f.whatsapp.value.startsWith("57") && f.whatsapp.value.length===12) f.whatsapp.value = f.whatsapp.value.slice(2);
   f.watermark.checked = SETTINGS.watermark !== false; f.newPassword.value = "";
   setCats = [...(SETTINGS.categories||[])]; setSizes = [...(SETTINGS.sizes||[])]; drawChips();
@@ -731,7 +844,7 @@ $("#addSize").onclick = () => { $("#newSize").value.split(",").map(s=>s.trim().t
 $("#setForm").onsubmit = async e => {
   e.preventDefault(); const f = e.target;
   const body = { categories:setCats, sizes:setSizes, watermark:f.watermark.checked };
-  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo"].forEach(k => body[k] = f[k].value);
+  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo","pickupInfo","faqChanges","faqSizes"].forEach(k => body[k] = f[k].value);
   if (f.newPassword.value) body.newPassword = f.newPassword.value;
   try{
     const d = await api("admin/settings",{method:"PUT", body:JSON.stringify(body)});

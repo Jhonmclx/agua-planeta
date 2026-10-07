@@ -18,6 +18,10 @@ type Product = {
   brand?: string;
   status: "available" | "sold" | "hidden";
   featured?: boolean;
+  isNew?: boolean;
+  colors?: string[];
+  condition?: string;
+  measures?: string;
   createdAt: number;
   updatedAt?: number;
 };
@@ -25,7 +29,7 @@ type OrderItem = { id: string; ref: string; name: string; size: string; qty: num
 type Order = {
   id: string;
   createdAt: number;
-  customer: { name: string; phone?: string; city?: string; address?: string; notes?: string; payment?: string };
+  customer: { name: string; phone?: string; city?: string; address?: string; notes?: string; payment?: string; delivery?: string };
   items: OrderItem[];
   total: number;
   status: "new" | "confirmed" | "cancelled";
@@ -44,6 +48,9 @@ const DEFAULT_SETTINGS = {
   refPrefix: "USA2",
   watermark: true,
   announcement: "🌊 Prendas únicas: cuando se vende, ¡no vuelve!",
+  pickupInfo: "",
+  faqChanges: "Antes de comprar, pregúntanos por WhatsApp las condiciones de cambio de la prenda.",
+  faqSizes: "Cada prenda muestra su talla y, cuando las tenemos, sus medidas. Si tienes dudas, escríbenos y te ayudamos a escoger.",
 };
 type Settings = typeof DEFAULT_SETTINGS & { passwordHash?: string };
 
@@ -125,6 +132,10 @@ function cleanProduct(input: any, existing?: Product): Product {
     brand: str(input.brand, 60),
     status,
     featured: !!input.featured,
+    isNew: !!input.isNew,
+    colors: Array.isArray(input.colors) ? [...new Set(input.colors.map((c: any) => str(c, 24)).filter(Boolean))].slice(0, 12) : existing?.colors || [],
+    condition: ["nuevo", "como-nuevo", "buen-estado"].includes(input.condition) ? input.condition : "",
+    measures: str(input.measures, 300),
     createdAt: existing?.createdAt || Date.now(),
     updatedAt: Date.now(),
   };
@@ -156,7 +167,12 @@ function publicView(p: Product) {
     brand: p.brand,
     soldOut: p.status === "sold" || total <= 0,
     lastUnit: total === 1,
+    lowStock: total === 2,
     featured: !!p.featured,
+    isNew: !!p.isNew,
+    colors: p.colors || [],
+    condition: p.condition || "",
+    measures: p.measures || "",
     createdAt: p.createdAt,
   };
 }
@@ -220,6 +236,7 @@ export default async (req: Request, context: Context) => {
           address: str(c.address, 160),
           notes: str(c.notes, 400),
           payment: str(c.payment, 60),
+          delivery: str(c.delivery, 60),
         },
         items,
         total: items.reduce((a, i) => a + i.price * i.qty, 0),
