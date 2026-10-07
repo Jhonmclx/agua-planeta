@@ -327,7 +327,7 @@ function filtered(){
 }
 
 function priceHtml(p, cls="price"){
-  if (!p.price) return `<div class="${cls} ask">Precio por WhatsApp</div>`;
+  if (!p.price) return "";
   return `<div class="${cls}">${fmt(p.price)}${p.oldPrice>p.price?`<s>${fmt(p.oldPrice)}</s>`:""}</div>`;
 }
 

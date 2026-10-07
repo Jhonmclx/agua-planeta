@@ -364,7 +364,7 @@ function renderProducts(){
   $("#stats").innerHTML = `
     <div class="stat"><b>${av.length}</b><span>Disponibles</span></div>
     <div class="stat"><b>${PRODUCTS.filter(p=>p.status==="sold"||totalStock(p)===0).length}</b><span>Vendidas</span></div>
-    <div class="stat"><b>${PRODUCTS.filter(p=>!p.price).length}</b><span>Sin precio</span></div>
+    <div class="stat"><b>${PRODUCTS.filter(p=>!p.price).length}</b><span>Sin precio (no se ven)</span></div>
     <div class="stat"><b>${fmt(value)||"$0"}</b><span>Valor en inventario</span></div>`;
   const q = $("#fq").value.trim().toLowerCase(), c = $("#fcat").value, st = $("#fst").value;
   const list = PRODUCTS.filter(p =>
@@ -379,7 +379,7 @@ function renderProducts(){
         <div class="ref">${esc(p.ref)} · ${esc(p.category)}</div>
         <div class="t">${esc(p.name)}</div>
         <div class="m">Tallas: ${p.sizes.map(s=>`${esc(s.size)}${s.stock!==1?` (${s.stock})`:""}`).join(", ")||"—"}</div>
-        <div class="pin"><input data-price="${p.id}" inputmode="numeric" value="${p.price?Number(p.price).toLocaleString("es-CO"):""}" placeholder="Poner precio"><span class="tag ${p.status==="hidden"?"hi":sold?"so":"av"}">${p.status==="hidden"?"Oculta":sold?"Vendida":"Disponible"}</span></div>
+        <div class="pin"><input data-price="${p.id}" inputmode="numeric" value="${p.price?Number(p.price).toLocaleString("es-CO"):""}" placeholder="Poner precio"><span class="tag ${p.status==="hidden"||!p.price?"hi":sold?"so":"av"}">${p.status==="hidden"?"Oculta":sold?"Vendida":!p.price?"No visible: falta precio":"Disponible"}</span></div>
       </div>
       <div class="acts">
         <button class="btn g sm" data-edit="${p.id}">Editar</button>

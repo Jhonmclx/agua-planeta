@@ -189,7 +189,8 @@ export default async (req: Request, context: Context) => {
     // ---- público ----
     if (parts[0] === "catalog" && method === "GET") {
       const [products, settings] = await Promise.all([getProducts(), getSettings()]);
-      const visible = products.filter((p) => p.status !== "hidden" && p.photos.length);
+      // solo se muestran en la tienda las prendas que ya tienen precio
+      const visible = products.filter((p) => p.status !== "hidden" && p.photos.length && p.price > 0);
       return json(
         { settings: publicSettings(settings), products: visible.map(publicView) },
         200,
