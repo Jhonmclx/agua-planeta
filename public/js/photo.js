@@ -3,7 +3,7 @@
 // - Agrega el logo USA2 como marca de agua (opcional)
 // - Permite ajustes manuales con sliders
 
-export const DEFAULT_ADJ = { auto: true, brightness: 0, contrast: 0, saturation: 0, warmth: 0, sharpen: 35, rotate: 0, crop: "3:4", zoom: 1, offsetX: 0, offsetY: 0, watermark: true };
+export const DEFAULT_ADJ = { bg: "none", auto: true, brightness: 0, contrast: 0, saturation: 0, warmth: 0, sharpen: 35, rotate: 0, crop: "3:4", zoom: 1, offsetX: 0, offsetY: 0, watermark: true };
 
 export async function loadBitmap(src) {
   // src: File/Blob o URL
@@ -176,4 +176,67 @@ export async function render(bitmap, adj = DEFAULT_ADJ, maxSide = 1400) {
 
 export function toBlob(canvas, quality = 0.86) {
   return new Promise((res) => canvas.toBlob(res, "image/jpeg", quality));
+}
+
+
+// ---------- Quitar fondo (se ejecuta en el celular, sin enviar la foto a otro servidor) ----------
+export const BACKGROUNDS = {
+  white:  { label: "Blanco",  paint: (ctx, w, h) => { ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, w, h); } },
+  studio: { label: "Estudio", paint: (ctx, w, h) => { const g = ctx.createRadialGradient(w / 2, h * 0.42, w * 0.1, w / 2, h * 0.5, Math.max(w, h) * 0.75); g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#e4e7ec"); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); } },
+  aqua:   { label: "Celeste", paint: (ctx, w, h) => { const g = ctx.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#e3fbfa"); g.addColorStop(1, "#e6eeff"); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); } },
+  pink:   { label: "Rosado",  paint: (ctx, w, h) => { const g = ctx.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#fff0f5"); g.addColorStop(1, "#f3ecff"); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); } },
+};
+
+let bgLib = null;
+export async function removeBg(bitmap, onProgress) {
+  if (!bgLib) bgLib = import("https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm").catch((e) => { bgLib = null; throw e; });
+  const lib = await bgLib;
+  const fn = lib.removeBackground || lib.default;
+  const s = Math.min(1, 1500 / Math.max(bitmap.width, bitmap.height));
+  const w = Math.round(bitmap.width * s), h = Math.round(bitmap.height * s);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").drawImage(bitmap, 0, 0, w, h);
+  const input = await new Promise((r) => c.toBlob(r, "image/png"));
+  const out = await fn(input, {
+    model: "isnet_quint8",
+    output: { format: "image/png" },
+    progress: (key, cur, total) => onProgress && onProgress(key, cur, total),
+  });
+  const cutout = await createImageBitmap(out);
+  // caja que encierra la prenda (para centrarla)
+  const m = document.createElement("canvas"); m.width = cutout.width; m.height = cutout.height;
+  const mctx = m.getContext("2d", { willReadFrequently: true }); mctx.drawImage(cutout, 0, 0);
+  const a = mctx.getImageData(0, 0, m.width, m.height).data;
+  let x0 = m.width, y0 = m.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < m.height; y += 2) for (let x = 0; x < m.width; x += 2) {
+    if (a[(y * m.width + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  if (x1 <= x0 || y1 <= y0) throw new Error("No se encontró la prenda en la foto");
+  return { cutout, bbox: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 } };
+}
+
+// Pone la prenda recortada sobre un fondo limpio, centrada y con sombra suave
+export function composeOnBg(item, adj) {
+  const { cutout, bbox } = item;
+  let ar = bbox.w / bbox.h;
+  if (adj.crop === "3:4") ar = 3 / 4; else if (adj.crop === "1:1") ar = 1; else if (adj.crop === "4:5") ar = 4 / 5;
+  if (adj.rotate % 180) ar = 1 / ar; // se rota después
+  const pad = 1.16;
+  let W = bbox.w * pad, H = W / ar;
+  if (H < bbox.h * pad) { H = bbox.h * pad; W = H * ar; }
+  W = Math.round(W); H = Math.round(H);
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+  (BACKGROUNDS[adj.bg] || BACKGROUNDS.white).paint(ctx, W, H);
+  const dx = (W - bbox.w) / 2 - bbox.x, dy = (H - bbox.h) / 2 - bbox.y;
+  ctx.save();
+  ctx.shadowColor = "rgba(20,30,60,.22)"; ctx.shadowBlur = Math.round(W * 0.03); ctx.shadowOffsetY = Math.round(W * 0.012);
+  ctx.drawImage(cutout, dx, dy);
+  ctx.restore();
+  return c;
+}
+
+// Imagen de origen según el fondo elegido
+export function sourceFor(item, adj) {
+  return adj.bg && adj.bg !== "none" && item.cutout ? composeOnBg(item, adj) : item.bitmap;
 }

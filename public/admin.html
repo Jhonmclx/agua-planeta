@@ -119,6 +119,8 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 .seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
 .seg button{flex:1;border:0;background:#fff;padding:8px 4px;font-weight:700;font-size:13px;color:var(--navy)}
 .seg button.on{background:var(--navy);color:#fff}
+#eBg{flex-wrap:wrap}#eBg button{flex:1 0 30%}
+.bgopt{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* nueva mercancía */
 .drop{border:2.5px dashed #8fd3e0;border-radius:16px;padding:26px 16px;text-align:center;background:#f4fdff;cursor:pointer}
@@ -203,6 +205,9 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
           <div class="f"><label>Precio para todas (opcional)</label><input id="bPrice" inputmode="numeric" placeholder="Ej: 45000"></div>
         </div>
         <div class="seg" id="bMode"><button data-m="one" class="on">1 foto = 1 prenda</button><button data-m="group">Todas las fotos = 1 prenda</button></div>
+        <div class="bgopt"><label class="switch"><input type="checkbox" id="bBgOn"> Quitar fondo a todas las fotos</label>
+          <select id="bBg" class="in" style="width:auto;padding:8px 10px"></select></div>
+        <div class="help" id="bBgHelp" style="margin-top:-6px">Deja la prenda sobre un fondo limpio. Es más lento: unos segundos por foto.</div>
         <label class="drop" id="drop"><input type="file" id="bFiles" accept="image/*" multiple hidden><b>📷 Toca para elegir fotos</b><div class="help">o arrástralas aquí · puedes tomar fotos con la cámara</div></label>
       </div>
       <div class="bulk" id="bulkList"></div>
@@ -278,6 +283,9 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
   <div class="pe-body">
     <div class="pe-view" id="eView"><canvas id="eCanvas"></canvas><button class="pe-cmp" id="eCmp">Mantén para ver original</button></div>
     <div class="ctrl">
+      <div class="lbl">Fondo de la foto</div>
+      <div class="seg" id="eBg"><button data-bg="none">Original</button><button data-bg="white">Blanco</button><button data-bg="studio">Estudio</button><button data-bg="aqua">Celeste</button><button data-bg="pink">Rosado</button></div>
+      <div class="help" id="eBgStatus" hidden></div>
       <label class="switch"><input type="checkbox" id="eAuto"> Mejora automática</label>
       <div class="lbl">Recorte</div>
       <div class="seg" id="eCrop"><button data-c="3:4">3:4</button><button data-c="4:5">4:5</button><button data-c="1:1">1:1</button><button data-c="orig">Original</button></div>
@@ -290,6 +298,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
       <div class="rng"><div><span>Nitidez</span><span id="v-sharpen"></span></div><input type="range" id="r-sharpen" min="0" max="100"></div>
       <div style="display:flex;gap:8px"><button class="btn g sm" id="eRot" style="flex:1">↻ Girar</button><button class="btn g sm" id="eReset" style="flex:1">Restablecer</button></div>
       <label class="switch"><input type="checkbox" id="eWm"> Logo USA2</label>
+
     </div>
   </div>
   <div class="md-f"><button class="btn g" data-close="eOv">Cancelar</button><button class="btn p" id="eApply">Listo</button></div>
@@ -298,7 +307,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { DEFAULT_ADJ, loadBitmap, render, toBlob } from "/js/photo.js";
+import { DEFAULT_ADJ, BACKGROUNDS, loadBitmap, render, toBlob, removeBg, sourceFor } from "/js/photo.js";
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -414,16 +423,23 @@ async function quickUpdate(id, patch, msg){
 
 // ---------- fotos: modelo común ----------
 // item = { url?, bitmap?, adj, thumb, dirty }
-async function photoFromFile(file){
+async function applyBg(item, bg, onProgress){
+  if (!item.cutout){ const r = await removeBg(item.bitmap, onProgress); item.cutout = r.cutout; item.bbox = r.bbox; }
+  item.adj = {...item.adj, bg, offsetX:0, offsetY:0, zoom:1}; item.dirty = true;
+}
+async function photoFromFile(file, autoBg){
   const bitmap = await loadBitmap(file);
   const adj = {...DEFAULT_ADJ, watermark: SETTINGS.watermark !== false};
-  const c = await render(bitmap, adj, 520);
-  return { bitmap, adj, thumb: c.toDataURL("image/jpeg", .8), dirty: true };
+  const item = { bitmap, adj, dirty: true };
+  if (autoBg){ try{ await applyBg(item, autoBg); }catch(e){ console.error(e); toast("No se pudo quitar el fondo de una foto; quedó con la foto original."); } }
+  const c = await render(sourceFor(item, item.adj), item.adj, 520);
+  item.thumb = c.toDataURL("image/jpeg", .8);
+  return item;
 }
 async function uploadPhoto(item){
   if (item.url && !item.dirty) return item.url;
   if (!item.bitmap) item.bitmap = await loadBitmap(item.url);
-  const canvas = await render(item.bitmap, item.adj, 1400);
+  const canvas = await render(sourceFor(item, item.adj), item.adj, 1400);
   const blob = await toBlob(canvas, .86);
   const d = await api("upload", {method:"POST", body: blob, headers:{"content-type":"image/jpeg"}});
   item.url = d.url; item.dirty = false;
@@ -448,12 +464,13 @@ function syncEditorUI(){
   $("#eAuto").checked = a.auto; $("#eWm").checked = a.watermark;
   RANGES.forEach(k => { $("#r-"+k).value = a[k]; $("#v-"+k).textContent = k==="zoom" ? a.zoom.toFixed(2)+"×" : (a[k]>0?"+":"")+a[k]; });
   $$("#eCrop button").forEach(b=>b.classList.toggle("on", b.dataset.c===a.crop));
+  $$("#eBg button").forEach(b=>b.classList.toggle("on", b.dataset.bg===(a.bg||"none")));
 }
 let drawQ = 0;
 async function drawEditor(original=false){
   const my = ++drawQ;
-  const adj = original ? {...E.adj, auto:false, brightness:0, contrast:0, saturation:0, warmth:0, sharpen:0, watermark:false} : E.adj;
-  const c = await render(E.item.bitmap, adj, 900);
+  const adj = original ? {...E.adj, bg:"none", auto:false, brightness:0, contrast:0, saturation:0, warmth:0, sharpen:0, watermark:false} : E.adj;
+  const c = await render(sourceFor(E.item, adj), adj, 900);
   if (my !== drawQ) return;
   const cv = $("#eCanvas"); cv.width = c.width; cv.height = c.height; cv.getContext("2d").drawImage(c,0,0);
 }
@@ -463,6 +480,19 @@ $("#eWm").onchange = e => { E.adj.watermark = e.target.checked; drawEditor(); };
 $("#eCrop").onclick = e => { const b=e.target.closest("[data-c]"); if(!b) return; E.adj.crop=b.dataset.c; E.adj.offsetX=0; E.adj.offsetY=0; syncEditorUI(); drawEditor(); };
 $("#eRot").onclick = () => { E.adj.rotate = (E.adj.rotate+90)%360; drawEditor(); };
 $("#eReset").onclick = () => { E.adj = {...DEFAULT_ADJ, watermark:E.adj.watermark}; syncEditorUI(); drawEditor(); };
+$("#eBg").onclick = async e => {
+  const b = e.target.closest("[data-bg]"); if (!b || E.busy) return;
+  const bg = b.dataset.bg;
+  if (bg !== "none" && !E.item.cutout){
+    E.busy = true; const st = $("#eBgStatus"); st.hidden = false;
+    st.textContent = "✨ Quitando fondo… la primera vez tarda un poco más";
+    try{ await applyBg(E.item, bg, (k,c,t)=>{ if (t) st.textContent = `✨ Preparando (${Math.round(c/t*100)}%)… solo la primera vez`; }); }
+    catch(err){ console.error(err); toast("No se pudo quitar el fondo. Revisa la conexión e intenta de nuevo.", 3500); E.busy=false; st.hidden=true; return; }
+    E.busy = false; st.hidden = true;
+  }
+  E.adj.bg = bg; if (bg !== "none"){ E.adj.offsetX = 0; E.adj.offsetY = 0; E.adj.zoom = 1; }
+  syncEditorUI(); drawEditor();
+};
 const cmp = $("#eCmp");
 ["pointerdown"].forEach(ev=>cmp.addEventListener(ev, e=>{ e.stopPropagation(); drawEditor(true); }));
 ["pointerup","pointerleave","pointercancel"].forEach(ev=>cmp.addEventListener(ev, ()=>drawEditor()));
@@ -479,7 +509,7 @@ $("#eView").addEventListener("pointermove", e => {
 $("#eView").addEventListener("pointerup", () => drag = null);
 $("#eApply").onclick = async () => {
   E.item.adj = {...E.adj}; E.item.dirty = true;
-  const c = await render(E.item.bitmap, E.item.adj, 520);
+  const c = await render(sourceFor(E.item, E.item.adj), E.item.adj, 520);
   E.item.thumb = c.toDataURL("image/jpeg", .8);
   $("#eOv").classList.remove("on"); E.onDone && E.onDone();
 };
@@ -567,6 +597,10 @@ $$("[data-close]").forEach(b => b.addEventListener("click", () => $("#"+b.datase
 
 // ---------- llegó mercancía (carga masiva) ----------
 let BULK = []; let bMode = "one";
+const BULK_BG = { on:false, bg:"studio" };
+$("#bBg").innerHTML = Object.entries(BACKGROUNDS).map(([k,v])=>`<option value="${k}" ${k==="studio"?"selected":""}>Fondo ${v.label.toLowerCase()}</option>`).join("");
+$("#bBgOn").onchange = e => { BULK_BG.on = e.target.checked; };
+$("#bBg").onchange = e => { BULK_BG.bg = e.target.value; };
 $("#bMode").onclick = e => { const b=e.target.closest("[data-m]"); if(!b) return; bMode=b.dataset.m; $$("#bMode button").forEach(x=>x.classList.toggle("on",x===b)); };
 const drop = $("#drop");
 drop.addEventListener("dragover", e => { e.preventDefault(); drop.style.borderColor="var(--navy)"; });
@@ -585,7 +619,7 @@ async function addBulk(files){
     const row = bMode==="group" ? rows[0] : rows[i];
     const ph = {thumb:"data:image/gif;base64,R0lGODlhAQABAAAAACw=", loading:true};
     row.photos.push(ph); drawBulk();
-    try{ Object.assign(ph, await photoFromFile(files[i])); }catch(e){ row.photos.splice(row.photos.indexOf(ph),1); }
+    try{ Object.assign(ph, await photoFromFile(files[i], BULK_BG.on ? BULK_BG.bg : null)); }catch(e){ row.photos.splice(row.photos.indexOf(ph),1); }
     ph.loading = false; drawBulk();
   }
 }
