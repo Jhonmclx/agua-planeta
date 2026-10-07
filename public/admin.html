@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agua Planeta · Administración</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1468ff">
+<link rel="icon" href="/assets/icon.png">
+<link rel="apple-touch-icon" href="/assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1238c9;--red:#ff2e7e;--cream:#eef8fa;--aqua:#00d4c8;--violet:#7b2ff7;--sun:#ffd23f;--paper:#fff;--ink:#14163a;--muted:#646b8f;--line:#d9e6ee;--ok:#1d8a4e;--wa:#1fa855;--warn:#c27a00}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.45 "DM Sans",system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+img{display:block;max-width:100%}
+.varsity{font-family:"Baloo 2",sans-serif;font-weight:800}
+.stripe{height:5px;background:linear-gradient(90deg,var(--aqua),#1468ff,var(--violet),var(--red),var(--sun))}
+header{background:linear-gradient(110deg,#1468ff,var(--violet));color:#fff;position:sticky;top:0;z-index:30}
+.hd{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.hd .varsity{font-size:22px}
+.hd small{opacity:.7}
+.hd .sp{flex:1}
+@media(max-width:560px){.hd small{display:none}.hd .varsity{font-size:18px}.hd{gap:8px}}
+.hd a,.hd button{color:#fff;background:rgba(255,255,255,.12);border:0;border-radius:999px;padding:7px 13px;font-weight:600;font-size:13px;text-decoration:none}
+nav.tabs{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:58px;z-index:25}
+nav.tabs .in{max-width:1100px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px}
+nav.tabs button{border:0;background:none;padding:13px 14px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button.on{color:var(--navy);border-color:var(--red)}
+nav.tabs .b{background:var(--red);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:4px}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--paper);border-radius:14px;box-shadow:0 1px 2px rgba(11,34,82,.06),0 6px 18px rgba(11,34,82,.06);padding:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:#fff;border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
+.stat b{display:block;font-size:22px;color:var(--navy)}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.in,.tools input,.tools select,.f input,.f select,.f textarea{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;outline:none;width:100%}
+.in:focus,.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--navy)}
+.tools input{flex:1;min-width:180px;width:auto}
+.tools select{width:auto}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;white-space:nowrap}
+.btn.p{background:linear-gradient(135deg,#1468ff,var(--violet));color:#fff}
+.btn.r{background:var(--red);color:#fff}
+.btn.g{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+.btn.w{background:var(--wa);color:#fff}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.5}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border-radius:12px;padding:10px;border:1px solid var(--line)}
+.item img{width:72px;height:96px;object-fit:cover;border-radius:8px;background:#eee}
+.item .t{font-weight:700;line-height:1.2}
+.item .ref{font-size:12px;font-weight:700;color:var(--red)}
+.item .m{font-size:13px;color:var(--muted);margin-top:2px}
+.item .acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.item.sold{opacity:.6}
+@media(max-width:560px){.item{grid-template-columns:64px minmax(0,1fr)}.item img{width:64px;height:86px}.item .acts{grid-column:1/-1;flex-direction:row;justify-content:flex-end}.pin input{width:110px}}
+.item.hid{opacity:.55;border-style:dashed}
+.pin{display:flex;align-items:center;gap:6px;margin-top:6px}
+.pin input{width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font-weight:700;color:var(--navy)}
+.tag{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;display:inline-block}
+.tag.av{background:#e2f3e9;color:var(--ok)}.tag.so{background:#f6e1e3;color:var(--red)}.tag.hi{background:#eceef4;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+
+/* modales */
+.ov{position:fixed;inset:0;background:rgba(9,16,36,.6);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+@media(min-width:760px){.ov{align-items:center}}
+.md{background:#fff;width:100%;max-width:760px;max-height:94vh;overflow:auto;border-radius:18px 18px 0 0;display:flex;flex-direction:column}
+@media(min-width:760px){.md{border-radius:18px}}
+.md-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.md-h h3{margin:0;color:var(--navy)}
+.md-b{padding:16px;display:grid;gap:14px}
+.md-f{padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:8px;position:sticky;bottom:0;background:#fff}
+.md-f .btn{flex:1}
+.x{width:36px;height:36px;border-radius:50%;border:0;background:#f0ebe1;font-weight:700}
+.f{display:grid;gap:6px}
+.f label,.lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.pt{position:relative;width:92px;height:122px;border-radius:10px;overflow:hidden;background:#eee;border:2px solid transparent}
+.pt.first{border-color:var(--red)}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pt .ops{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:4px;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.pt .ops button{border:0;background:rgba(255,255,255,.92);border-radius:6px;font-size:11px;font-weight:700;padding:3px 6px}
+.pt .spin{position:absolute;inset:0;display:grid;place-items:center;background:rgba(255,255,255,.7);font-size:12px;font-weight:700;color:var(--navy)}
+.addph{width:92px;height:122px;border-radius:10px;border:2px dashed var(--line);display:grid;place-items:center;text-align:center;color:var(--navy);font-weight:700;font-size:12px;background:#faf8f3;cursor:pointer}
+.sizes-ed{display:grid;gap:8px}
+.szrow{display:flex;gap:8px;align-items:center}
+.szrow select,.szrow input{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff}
+.szrow input{width:80px}
+.quick-sizes{display:flex;gap:6px;flex-wrap:wrap}
+.quick-sizes button{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-weight:700;color:var(--navy);font-size:13px}
+.quick-sizes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600}
+.switch input{width:20px;height:20px;accent-color:var(--navy)}
+
+/* editor de foto */
+.pe{max-width:980px}
+.pe-body{display:grid;grid-template-columns:1fr 300px;gap:16px;padding:16px}
+@media(max-width:760px){.pe-body{grid-template-columns:1fr}}
+.pe-view{position:relative;background:#e9e5dc;border-radius:12px;overflow:hidden;display:grid;place-items:center;min-height:300px;touch-action:none}
+.pe-view canvas{max-width:100%;max-height:62vh;display:block}
+.pe-cmp{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;user-select:none}
+.ctrl{display:grid;gap:10px;align-content:start}
+.rng{display:grid;gap:2px}
+.rng div{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.rng input{width:100%;accent-color:var(--navy)}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;background:#fff;padding:8px 4px;font-weight:700;font-size:13px;color:var(--navy)}
+.seg button.on{background:var(--navy);color:#fff}
+
+/* nueva mercancía */
+.drop{border:2.5px dashed #8fd3e0;border-radius:16px;padding:26px 16px;text-align:center;background:#f4fdff;cursor:pointer}
+.drop b{color:var(--navy);font-size:17px}
+.bulk{display:grid;gap:10px;margin-top:14px}
+.brow{display:grid;grid-template-columns:96px 1fr;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.brow .ph{position:relative}
+.brow .ph img{width:96px;height:128px;object-fit:cover;border-radius:9px;cursor:pointer}
+.brow .ph .n{position:absolute;top:4px;left:4px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px}
+.brow .ph .more{font-size:11px;text-align:center;color:var(--muted);margin-top:4px}
+.brow .fl{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.brow .fl .full{grid-column:1/-1}
+.brow input,.brow select{border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff;width:100%}
+.brow .rmv{border:0;background:none;color:var(--red);font-weight:700;font-size:12px;justify-self:start;padding:0}
+.sticky-save{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none;z-index:28}
+.sticky-save.on{display:block}
+.sticky-save .in{max-width:1100px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.progress{height:8px;background:#eee;border-radius:99px;overflow:hidden;flex:1}
+.progress i{display:block;height:100%;background:var(--red);width:0;transition:width .2s}
+
+/* pedidos */
+.order{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:8px}
+.order .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.order .lines{font-size:14px;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:8px 0}
+.order .acts{display:flex;gap:8px;flex-wrap:wrap}
+.st-new{background:#fff4d6;color:#7a5600}.st-confirmed{background:#e2f3e9;color:var(--ok)}.st-cancelled{background:#eceef4;color:var(--muted)}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(125deg,#00d4c8,#1468ff 45%,#7b2ff7 80%,#ff2e7e)}
+.login .card{width:100%;max-width:360px;display:grid;gap:12px;text-align:center}
+.login img{height:80px;width:80px;margin:0 auto}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.25s;z-index:90;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.chipsed{display:flex;gap:6px;flex-wrap:wrap}
+.chipsed span{background:#f0ebe1;border-radius:999px;padding:5px 6px 5px 12px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+.chipsed span button{border:0;background:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;line-height:1}
+.help{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="loginView" class="login" hidden>
+  <form class="card" id="loginForm">
+    <img src="/assets/logo.svg" alt="Agua Planeta">
+    <h2 style="margin:0;color:var(--navy)">Panel de administración</h2>
+    <input class="in" type="password" id="pass" placeholder="Contraseña" autocomplete="current-password" required>
+    <button class="btn p">Entrar</button>
+    <div class="help" id="loginErr"></div>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <div class="stripe"></div>
+  <header><div class="hd"><img src="/assets/logo.svg" alt="" style="width:34px;height:34px"><span class="varsity">Agua Planeta</span><small>Administración</small><span class="sp"></span><a href="/" target="_blank">Ver tienda</a><button id="logout">Salir</button></div></header>
+  <nav class="tabs"><div class="in">
+    <button data-tab="products" class="on">Catálogo</button>
+    <button data-tab="bulk">＋ Llegó mercancía</button>
+    <button data-tab="orders">Pedidos <span class="b" id="ordersN" hidden></span></button>
+    <button data-tab="settings">Ajustes</button>
+  </div></nav>
+  <main>
+    <!-- CATÁLOGO -->
+    <section class="panel on" id="tab-products">
+      <div class="stats" id="stats"></div>
+      <div class="tools">
+        <input id="fq" placeholder="Buscar por nombre o referencia…">
+        <select id="fcat"></select>
+        <select id="fst"><option value="">Todos</option><option value="available">Disponibles</option><option value="sold">Vendidos</option><option value="hidden">Ocultos</option><option value="noprice">Sin precio</option></select>
+        <button class="btn r" id="newBtn">＋ Nueva prenda</button>
+      </div>
+      <div class="list" id="plist"><div class="empty">Cargando…</div></div>
+    </section>
+
+    <!-- NUEVA MERCANCÍA -->
+    <section class="panel" id="tab-bulk">
+      <div class="card" style="display:grid;gap:12px">
+        <div>
+          <h3 style="margin:0 0 4px;color:var(--navy)">Llegó mercancía nueva</h3>
+          <div class="help">Elige varias fotos a la vez. Cada foto se edita sola (luz, color, recorte y marca Agua Planeta) y queda como una prenda. Luego solo pones nombre, precio y talla.</div>
+        </div>
+        <div class="two">
+          <div class="f"><label>Categoría para todas</label><select id="bCat"></select></div>
+          <div class="f"><label>Precio para todas (opcional)</label><input id="bPrice" inputmode="numeric" placeholder="Ej: 45000"></div>
+        </div>
+        <div class="seg" id="bMode"><button data-m="one" class="on">1 foto = 1 prenda</button><button data-m="group">Todas las fotos = 1 prenda</button></div>
+        <label class="drop" id="drop"><input type="file" id="bFiles" accept="image/*" multiple hidden><b>📷 Toca para elegir fotos</b><div class="help">o arrástralas aquí · puedes tomar fotos con la cámara</div></label>
+      </div>
+      <div class="bulk" id="bulkList"></div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="panel" id="tab-orders">
+      <div class="help" style="margin-bottom:10px">Cada pedido que un cliente envía por WhatsApp queda guardado aquí. Al <b>confirmar la venta</b>, se descuenta del inventario y la prenda aparece como vendida.</div>
+      <div class="list" id="olist"></div>
+    </section>
+
+    <!-- AJUSTES -->
+    <section class="panel" id="tab-settings">
+      <form class="card" id="setForm" style="display:grid;gap:14px">
+        <div class="two">
+          <div class="f"><label>WhatsApp que recibe pedidos</label><input name="whatsapp" inputmode="tel" placeholder="3001234567"></div>
+          <div class="f"><label>Instagram</label><input name="instagram" placeholder="@aguaplaneta"></div>
+        </div>
+        <div class="two">
+          <div class="f"><label>Nombre de la tienda</label><input name="storeName"></div>
+          <div class="f"><label>Prefijo de referencias</label><input name="refPrefix" placeholder="USA2"></div>
+        </div>
+        <div class="f"><label>Eslogan</label><input name="tagline"></div>
+        <div class="f"><label>Anuncio (barra superior)</label><input name="announcement" placeholder="Ej: ¡Nueva mercancía cada semana!"></div>
+        <div class="f"><label>Métodos de pago (separados por /)</label><input name="paymentInfo"></div>
+        <div class="f"><label>Información de envíos</label><textarea name="shippingInfo" rows="2"></textarea></div>
+        <div class="f"><label>Categorías</label><div class="chipsed" id="catChips"></div><div class="szrow"><input id="newCat" placeholder="Nueva categoría" style="flex:1;width:auto"><button type="button" class="btn g sm" id="addCat">Agregar</button></div></div>
+        <div class="f"><label>Tallas rápidas</label><div class="chipsed" id="sizeChips"></div><div class="szrow"><input id="newSize" placeholder="Ej: 28, 30, Única" style="flex:1;width:auto"><button type="button" class="btn g sm" id="addSize">Agregar</button></div></div>
+        <label class="switch"><input type="checkbox" name="watermark"> Poner marca Agua Planeta en las fotos nuevas</label>
+        <div class="f"><label>Cambiar contraseña del panel</label><input name="newPassword" type="password" placeholder="Nueva contraseña (mínimo 6)" autocomplete="new-password"></div>
+        <button class="btn p">Guardar ajustes</button>
+      </form>
+    </section>
+  </main>
+  <div class="sticky-save" id="bulkBar"><div class="in"><b id="bulkInfo"></b><div class="progress" id="bulkProg" hidden><i></i></div><button class="btn g" id="bulkClear">Vaciar</button><button class="btn r" id="bulkSave">Publicar todo</button></div></div>
+</div>
+
+<!-- editor de prenda -->
+<div class="ov" id="pOv"><div class="md">
+  <div class="md-h"><h3 id="pTitle">Prenda</h3><button class="x" data-close="pOv">✕</button></div>
+  <div class="md-b">
+    <div class="f"><label>Fotos <span style="text-transform:none;font-weight:500">(la primera es la portada · toca una para ajustarla)</span></label>
+      <div class="photos" id="pPhotos"></div>
+      <input type="file" id="pFiles" accept="image/*" multiple hidden>
+    </div>
+    <div class="two">
+      <div class="f"><label>Referencia</label><input id="pRef" placeholder="Automática"></div>
+      <div class="f"><label>Categoría</label><select id="pCat"></select></div>
+    </div>
+    <div class="f"><label>Nombre</label><input id="pName" placeholder="Ej: Buzo con capota azul"></div>
+    <div class="two">
+      <div class="f"><label>Precio</label><input id="pPrice" inputmode="numeric" placeholder="Ej: 45000"></div>
+      <div class="f"><label>Precio antes (oferta)</label><input id="pOld" inputmode="numeric" placeholder="Opcional"></div>
+    </div>
+    <div class="f"><label>Tallas y cantidades</label>
+      <div class="quick-sizes" id="pQuick"></div>
+      <div class="sizes-ed" id="pSizes"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label>Para</label><select id="pGender"><option value="">—</option><option>Mujer</option><option>Hombre</option><option>Unisex</option><option>Niños</option></select></div>
+      <div class="f"><label>Marca</label><input id="pBrand" placeholder="Opcional"></div>
+    </div>
+    <div class="f"><label>Descripción</label><textarea id="pDesc" rows="3" placeholder="Estado, material, medidas…"></textarea></div>
+    <div class="f"><label>Estado</label><div class="seg" id="pStatus"><button data-s="available">Disponible</button><button data-s="sold">Vendida</button><button data-s="hidden">Oculta</button></div></div>
+    <label class="switch"><input type="checkbox" id="pFeat"> Destacar al inicio</label>
+  </div>
+  <div class="md-f"><button class="btn g" id="pDel">Eliminar</button><button class="btn p" id="pSave">Guardar</button></div>
+</div></div>
+
+<!-- editor de foto -->
+<div class="ov" id="eOv" style="z-index:60"><div class="md pe">
+  <div class="md-h"><h3>Ajustar foto</h3><button class="x" data-close="eOv">✕</button></div>
+  <div class="pe-body">
+    <div class="pe-view" id="eView"><canvas id="eCanvas"></canvas><button class="pe-cmp" id="eCmp">Mantén para ver original</button></div>
+    <div class="ctrl">
+      <label class="switch"><input type="checkbox" id="eAuto"> Mejora automática</label>
+      <div class="lbl">Recorte</div>
+      <div class="seg" id="eCrop"><button data-c="3:4">3:4</button><button data-c="4:5">4:5</button><button data-c="1:1">1:1</button><button data-c="orig">Original</button></div>
+      <div class="rng"><div><span>Zoom</span><span id="v-zoom"></span></div><input type="range" id="r-zoom" min="1" max="2.5" step="0.05"></div>
+      <div class="help" style="margin-top:-6px">Arrastra la foto para moverla dentro del recorte.</div>
+      <div class="rng"><div><span>Brillo</span><span id="v-brightness"></span></div><input type="range" id="r-brightness" min="-50" max="50"></div>
+      <div class="rng"><div><span>Contraste</span><span id="v-contrast"></span></div><input type="range" id="r-contrast" min="-40" max="40"></div>
+      <div class="rng"><div><span>Color</span><span id="v-saturation"></span></div><input type="range" id="r-saturation" min="-60" max="60"></div>
+      <div class="rng"><div><span>Calidez</span><span id="v-warmth"></span></div><input type="range" id="r-warmth" min="-50" max="50"></div>
+      <div class="rng"><div><span>Nitidez</span><span id="v-sharpen"></span></div><input type="range" id="r-sharpen" min="0" max="100"></div>
+      <div style="display:flex;gap:8px"><button class="btn g sm" id="eRot" style="flex:1">↻ Girar</button><button class="btn g sm" id="eReset" style="flex:1">Restablecer</button></div>
+      <label class="switch"><input type="checkbox" id="eWm"> Marca Agua Planeta</label>
+    </div>
+  </div>
+  <div class="md-f"><button class="btn g" data-close="eOv">Cancelar</button><button class="btn p" id="eApply">Listo</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { DEFAULT_ADJ, loadBitmap, render, toBlob } from "/js/photo.js";
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => n ? "$" + Number(n).toLocaleString("es-CO") : "";
+const money = v => Math.round(Number(String(v||"").replace(/[^\d]/g,""))) || 0;
+function toast(t, ms=2200){ const el=$("#toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),ms); }
+
+let PASS = ""; try { PASS = localStorage.getItem("usa2admin") || ""; } catch(e){}
+let PRODUCTS = [], SETTINGS = {}, ORDERS = [];
+
+async function api(path, opts={}){
+  const r = await fetch("/api/"+path, {...opts, headers:{"x-admin-password":PASS, ...(opts.body && !(opts.body instanceof Blob) ? {"content-type":"application/json"}:{}), ...(opts.headers||{})}});
+  if (r.status === 401){ showLogin("Tu sesión expiró. Entra de nuevo."); throw new Error("401"); }
+  const d = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(d.error || "Error "+r.status);
+  return d;
+}
+
+// ---------- login ----------
+function showLogin(msg=""){ $("#app").hidden = true; $("#loginView").hidden = false; $("#loginErr").textContent = msg; }
+$("#loginForm").onsubmit = async e => {
+  e.preventDefault();
+  PASS = $("#pass").value;
+  const r = await fetch("/api/login",{method:"POST",headers:{"x-admin-password":PASS}});
+  if (!r.ok){ $("#loginErr").textContent = "Contraseña incorrecta"; return; }
+  try{ localStorage.setItem("usa2admin", PASS); }catch(e){}
+  start();
+};
+$("#logout").onclick = () => { try{ localStorage.removeItem("usa2admin"); }catch(e){} PASS=""; showLogin(); };
+
+async function start(){
+  $("#loginView").hidden = true; $("#app").hidden = false;
+  try{
+    const d = await api("admin/products");
+    PRODUCTS = d.products; SETTINGS = d.settings;
+    fillSelects(); renderProducts(); loadOrders();
+  }catch(e){ if (e.message!=="401") toast(e.message); }
+}
+
+// ---------- pestañas ----------
+$$("nav.tabs button").forEach(b => b.onclick = () => {
+  $$("nav.tabs button").forEach(x=>x.classList.toggle("on", x===b));
+  $$(".panel").forEach(p=>p.classList.toggle("on", p.id==="tab-"+b.dataset.tab));
+  $("#bulkBar").classList.toggle("on", b.dataset.tab==="bulk" && BULK.length>0);
+  if (b.dataset.tab==="orders") loadOrders();
+  if (b.dataset.tab==="settings") fillSettings();
+  scrollTo({top:0});
+});
+
+function fillSelects(){
+  const cats = [...new Set([...(SETTINGS.categories||[]), ...PRODUCTS.map(p=>p.category)])];
+  $("#fcat").innerHTML = `<option value="">Todas las categorías</option>` + cats.map(c=>`<option>${esc(c)}</option>`).join("");
+  const opts = cats.map(c=>`<option>${esc(c)}</option>`).join("");
+  $("#pCat").innerHTML = opts; $("#bCat").innerHTML = opts;
+}
+
+// ---------- catálogo ----------
+const totalStock = p => p.sizes.reduce((a,s)=>a+s.stock,0);
+function renderProducts(){
+  const av = PRODUCTS.filter(p=>p.status==="available" && totalStock(p)>0);
+  const value = av.reduce((a,p)=>a+p.price*totalStock(p),0);
+  $("#stats").innerHTML = `
+    <div class="stat"><b>${av.length}</b><span>Disponibles</span></div>
+    <div class="stat"><b>${PRODUCTS.filter(p=>p.status==="sold"||totalStock(p)===0).length}</b><span>Vendidas</span></div>
+    <div class="stat"><b>${PRODUCTS.filter(p=>!p.price).length}</b><span>Sin precio</span></div>
+    <div class="stat"><b>${fmt(value)||"$0"}</b><span>Valor en inventario</span></div>`;
+  const q = $("#fq").value.trim().toLowerCase(), c = $("#fcat").value, st = $("#fst").value;
+  const list = PRODUCTS.filter(p =>
+    (!q || (p.name+" "+p.ref).toLowerCase().includes(q)) && (!c || p.category===c) &&
+    (!st || (st==="noprice" ? !p.price : st==="sold" ? (p.status==="sold"||totalStock(p)===0) : st==="available" ? (p.status==="available"&&totalStock(p)>0) : p.status===st)));
+  if (!list.length){ $("#plist").innerHTML = `<div class="empty">No hay prendas aquí.</div>`; return; }
+  $("#plist").innerHTML = list.map(p => {
+    const sold = p.status==="sold" || totalStock(p)===0;
+    return `<div class="item ${sold?"sold":""} ${p.status==="hidden"?"hid":""}" data-id="${p.id}">
+      <img loading="lazy" src="${esc(p.photos[0]||"/assets/icon.png")}" alt="">
+      <div>
+        <div class="ref">${esc(p.ref)} · ${esc(p.category)}</div>
+        <div class="t">${esc(p.name)}</div>
+        <div class="m">Tallas: ${p.sizes.map(s=>`${esc(s.size)}${s.stock!==1?` (${s.stock})`:""}`).join(", ")||"—"}</div>
+        <div class="pin"><input data-price="${p.id}" inputmode="numeric" value="${p.price?Number(p.price).toLocaleString("es-CO"):""}" placeholder="Poner precio"><span class="tag ${p.status==="hidden"?"hi":sold?"so":"av"}">${p.status==="hidden"?"Oculta":sold?"Vendida":"Disponible"}</span></div>
+      </div>
+      <div class="acts">
+        <button class="btn g sm" data-edit="${p.id}">Editar</button>
+        ${sold ? `<button class="btn g sm" data-restock="${p.id}">Reactivar</button>` : `<button class="btn g sm" data-sold="${p.id}">Vendida</button>`}
+      </div>
+    </div>`;
+  }).join("");
+}
+["#fq","#fcat","#fst"].forEach(s => $(s).addEventListener("input", renderProducts));
+
+$("#plist").addEventListener("click", async e => {
+  const ed = e.target.closest("[data-edit]"); if (ed) return openEditor(PRODUCTS.find(p=>p.id===ed.dataset.edit));
+  const so = e.target.closest("[data-sold]");
+  if (so) return quickUpdate(so.dataset.sold, {status:"sold"}, "Marcada como vendida");
+  const rs = e.target.closest("[data-restock]");
+  if (rs){ const p = PRODUCTS.find(x=>x.id===rs.dataset.restock); const sizes = p.sizes.map(s=>({...s, stock: Math.max(1,s.stock)})); return quickUpdate(p.id, {status:"available", sizes}, "Disponible de nuevo"); }
+  const it = e.target.closest(".item"); if (it && !e.target.closest("input,button")) openEditor(PRODUCTS.find(p=>p.id===it.dataset.id));
+});
+$("#plist").addEventListener("change", e => {
+  const inp = e.target.closest("[data-price]"); if (!inp) return;
+  const price = money(inp.value);
+  quickUpdate(inp.dataset.price, {price}, price ? "Precio guardado: "+fmt(price) : "Precio quitado");
+});
+$("#plist").addEventListener("keydown", e => { if (e.key==="Enter" && e.target.matches("[data-price]")) e.target.blur(); });
+
+async function quickUpdate(id, patch, msg){
+  try{
+    const d = await api("admin/products/"+id, {method:"PUT", body:JSON.stringify(patch)});
+    PRODUCTS = PRODUCTS.map(p=>p.id===id?d.product:p); renderProducts(); toast(msg);
+  }catch(e){ if (e.message!=="401") toast("No se pudo guardar: "+e.message); }
+}
+
+// ---------- fotos: modelo común ----------
+// item = { url?, bitmap?, adj, thumb, dirty }
+async function photoFromFile(file){
+  const bitmap = await loadBitmap(file);
+  const adj = {...DEFAULT_ADJ, watermark: SETTINGS.watermark !== false};
+  const c = await render(bitmap, adj, 520);
+  return { bitmap, adj, thumb: c.toDataURL("image/jpeg", .8), dirty: true };
+}
+async function uploadPhoto(item){
+  if (item.url && !item.dirty) return item.url;
+  if (!item.bitmap) item.bitmap = await loadBitmap(item.url);
+  const canvas = await render(item.bitmap, item.adj, 1400);
+  const blob = await toBlob(canvas, .86);
+  const d = await api("upload", {method:"POST", body: blob, headers:{"content-type":"image/jpeg"}});
+  item.url = d.url; item.dirty = false;
+  return d.url;
+}
+
+// ---------- editor de foto ----------
+let E = null; // {item, adj, onDone}
+const RANGES = ["zoom","brightness","contrast","saturation","warmth","sharpen"];
+async function openPhotoEditor(item, onDone){
+  if (!item.bitmap){
+    toast("Cargando foto…");
+    item.bitmap = await loadBitmap(item.url);
+    // las fotos ya publicadas ya fueron mejoradas: no se vuelve a aplicar lo automático
+    if (!item.adj) item.adj = {...DEFAULT_ADJ, auto:false, sharpen:0, crop:"orig", watermark:false};
+  }
+  E = { item, adj: {...item.adj}, onDone };
+  syncEditorUI(); $("#eOv").classList.add("on"); drawEditor();
+}
+function syncEditorUI(){
+  const a = E.adj;
+  $("#eAuto").checked = a.auto; $("#eWm").checked = a.watermark;
+  RANGES.forEach(k => { $("#r-"+k).value = a[k]; $("#v-"+k).textContent = k==="zoom" ? a.zoom.toFixed(2)+"×" : (a[k]>0?"+":"")+a[k]; });
+  $$("#eCrop button").forEach(b=>b.classList.toggle("on", b.dataset.c===a.crop));
+}
+let drawQ = 0;
+async function drawEditor(original=false){
+  const my = ++drawQ;
+  const adj = original ? {...E.adj, auto:false, brightness:0, contrast:0, saturation:0, warmth:0, sharpen:0, watermark:false} : E.adj;
+  const c = await render(E.item.bitmap, adj, 900);
+  if (my !== drawQ) return;
+  const cv = $("#eCanvas"); cv.width = c.width; cv.height = c.height; cv.getContext("2d").drawImage(c,0,0);
+}
+RANGES.forEach(k => $("#r-"+k).addEventListener("input", e => { E.adj[k] = Number(e.target.value); syncEditorUI(); drawEditor(); }));
+$("#eAuto").onchange = e => { E.adj.auto = e.target.checked; drawEditor(); };
+$("#eWm").onchange = e => { E.adj.watermark = e.target.checked; drawEditor(); };
+$("#eCrop").onclick = e => { const b=e.target.closest("[data-c]"); if(!b) return; E.adj.crop=b.dataset.c; E.adj.offsetX=0; E.adj.offsetY=0; syncEditorUI(); drawEditor(); };
+$("#eRot").onclick = () => { E.adj.rotate = (E.adj.rotate+90)%360; drawEditor(); };
+$("#eReset").onclick = () => { E.adj = {...DEFAULT_ADJ, watermark:E.adj.watermark}; syncEditorUI(); drawEditor(); };
+const cmp = $("#eCmp");
+["pointerdown"].forEach(ev=>cmp.addEventListener(ev, e=>{ e.stopPropagation(); drawEditor(true); }));
+["pointerup","pointerleave","pointercancel"].forEach(ev=>cmp.addEventListener(ev, ()=>drawEditor()));
+// arrastrar para mover el recorte
+let drag = null;
+$("#eView").addEventListener("pointerdown", e => { if (e.target===cmp) return; drag = {x:e.clientX, y:e.clientY, ox:E.adj.offsetX, oy:E.adj.offsetY}; $("#eView").setPointerCapture(e.pointerId); });
+$("#eView").addEventListener("pointermove", e => {
+  if (!drag) return;
+  const r = $("#eCanvas").getBoundingClientRect();
+  E.adj.offsetX = Math.max(-1, Math.min(1, drag.ox - (e.clientX-drag.x)/r.width*2));
+  E.adj.offsetY = Math.max(-1, Math.min(1, drag.oy - (e.clientY-drag.y)/r.height*2));
+  drawEditor();
+});
+$("#eView").addEventListener("pointerup", () => drag = null);
+$("#eApply").onclick = async () => {
+  E.item.adj = {...E.adj}; E.item.dirty = true;
+  const c = await render(E.item.bitmap, E.item.adj, 520);
+  E.item.thumb = c.toDataURL("image/jpeg", .8);
+  $("#eOv").classList.remove("on"); E.onDone && E.onDone();
+};
+
+// ---------- editor de prenda ----------
+let P = null; // borrador
+function openEditor(p){
+  const isNew = !p;
+  P = p ? JSON.parse(JSON.stringify(p)) : { ref:"", name:"", category: SETTINGS.categories?.[0]||"Buzos", price:0, oldPrice:0, sizes:[], photos:[], description:"", gender:"", brand:"", status:"available", featured:false };
+  P._isNew = isNew;
+  P._photos = (P.photos||[]).map(url=>({url, thumb:url, dirty:false}));
+  $("#pTitle").textContent = isNew ? "Nueva prenda" : P.ref;
+  $("#pRef").value = P.ref; $("#pCat").value = P.category; $("#pName").value = P.name;
+  if (![...$("#pCat").options].some(o=>o.value===P.category)) $("#pCat").insertAdjacentHTML("beforeend", `<option>${esc(P.category)}</option>`), $("#pCat").value=P.category;
+  $("#pPrice").value = P.price ? Number(P.price).toLocaleString("es-CO") : ""; $("#pOld").value = P.oldPrice ? Number(P.oldPrice).toLocaleString("es-CO") : "";
+  $("#pGender").value = P.gender||""; $("#pBrand").value = P.brand||""; $("#pDesc").value = P.description||""; $("#pFeat").checked = !!P.featured;
+  $("#pDel").hidden = isNew;
+  drawPhotos(); drawSizes(); drawStatus();
+  $("#pOv").classList.add("on");
+  if (isNew) setTimeout(()=>$("#pFiles").click(), 150);
+}
+function drawPhotos(){
+  $("#pPhotos").innerHTML = P._photos.map((ph,i)=>`
+    <div class="pt ${i?"":"first"}" data-i="${i}"><img src="${esc(ph.thumb)}" alt="">
+      ${ph.loading?`<div class="spin">Editando…</div>`:""}
+      <div class="ops">${i?`<button data-first="${i}" title="Portada">★</button>`:"<span></span>"}<button data-rmph="${i}">✕</button></div>
+    </div>`).join("") + `<label class="addph" for="pFiles">＋<br>Agregar<br>fotos</label>`;
+}
+$("#pPhotos").addEventListener("click", e => {
+  const rm = e.target.closest("[data-rmph]"); if (rm){ P._photos.splice(Number(rm.dataset.rmph),1); return drawPhotos(); }
+  const f = e.target.closest("[data-first]"); if (f){ const [x]=P._photos.splice(Number(f.dataset.first),1); P._photos.unshift(x); return drawPhotos(); }
+  const t = e.target.closest(".pt"); if (t){ const it=P._photos[Number(t.dataset.i)]; if(!it.loading) openPhotoEditor(it, drawPhotos); }
+});
+$("#pFiles").onchange = async e => {
+  const files = [...e.target.files]; e.target.value = "";
+  for (const file of files){
+    const ph = {thumb:"data:image/gif;base64,R0lGODlhAQABAAAAACw=", loading:true};
+    P._photos.push(ph); drawPhotos();
+    try{ Object.assign(ph, await photoFromFile(file)); }catch(err){ toast("No se pudo leer una foto"); P._photos.splice(P._photos.indexOf(ph),1); }
+    ph.loading = false; drawPhotos();
+  }
+};
+function drawSizes(){
+  const quick = SETTINGS.sizes || ["XS","S","M","L","XL","XXL"];
+  $("#pQuick").innerHTML = quick.map(s=>`<button type="button" data-qs="${esc(s)}" class="${P.sizes.some(x=>x.size===s)?"on":""}">${esc(s)}</button>`).join("") + `<button type="button" data-qs="+">＋ Otra</button>`;
+  $("#pSizes").innerHTML = P.sizes.map((s,i)=>`<div class="szrow"><b style="min-width:52px">${esc(s.size)}</b><span class="help">Cantidad</span><input type="number" min="0" data-st="${i}" value="${s.stock}"><button type="button" class="btn g sm" data-rs="${i}">Quitar</button></div>`).join("") || `<div class="help">Toca una talla para agregarla.</div>`;
+}
+$("#pQuick").onclick = e => {
+  const b = e.target.closest("[data-qs]"); if (!b) return;
+  let s = b.dataset.qs;
+  if (s === "+"){ s = (prompt("Escribe la talla (ej: 32, 8, Única)")||"").trim().toUpperCase(); if(!s) return; }
+  const i = P.sizes.findIndex(x=>x.size===s);
+  if (i>=0) P.sizes.splice(i,1); else P.sizes.push({size:s, stock:1});
+  drawSizes();
+};
+$("#pSizes").addEventListener("input", e => { const i=e.target.dataset.st; if(i!==undefined) P.sizes[i].stock = Math.max(0, Number(e.target.value)||0); });
+$("#pSizes").addEventListener("click", e => { const r=e.target.closest("[data-rs]"); if(r){ P.sizes.splice(Number(r.dataset.rs),1); drawSizes(); } });
+function drawStatus(){ $$("#pStatus button").forEach(b=>b.classList.toggle("on", b.dataset.s===P.status)); }
+$("#pStatus").onclick = e => { const b=e.target.closest("[data-s]"); if(b){ P.status=b.dataset.s; drawStatus(); } };
+
+$("#pSave").onclick = async () => {
+  if (!P._photos.length) return toast("Agrega al menos una foto");
+  if (P._photos.some(p=>p.loading)) return toast("Espera, se están editando las fotos…");
+  if (!P.sizes.length) return toast("Elige al menos una talla");
+  const btn = $("#pSave"); btn.disabled = true;
+  try{
+    const photos = [];
+    for (let i=0;i<P._photos.length;i++){ btn.textContent = `Subiendo foto ${i+1}/${P._photos.length}…`; photos.push(await uploadPhoto(P._photos[i])); }
+    btn.textContent = "Guardando…";
+    const body = { ref:$("#pRef").value.trim(), name:$("#pName").value.trim()||"Prenda", category:$("#pCat").value, price:money($("#pPrice").value), oldPrice:money($("#pOld").value),
+      sizes:P.sizes, photos, description:$("#pDesc").value, gender:$("#pGender").value, brand:$("#pBrand").value, status:P.status, featured:$("#pFeat").checked };
+    if (P._isNew){ const d = await api("admin/products",{method:"POST", body:JSON.stringify(body)}); PRODUCTS = [...d.products, ...PRODUCTS]; toast(`Publicada como ${d.products[0].ref} ✓`); }
+    else { const d = await api("admin/products/"+P.id,{method:"PUT", body:JSON.stringify(body)}); PRODUCTS = PRODUCTS.map(p=>p.id===P.id?d.product:p); toast("Cambios guardados ✓"); }
+    $("#pOv").classList.remove("on"); fillSelects(); renderProducts();
+  }catch(e){ if (e.message!=="401") toast("Error: "+e.message, 4000); }
+  btn.disabled = false; btn.textContent = "Guardar";
+};
+$("#pDel").onclick = async () => {
+  if (!confirm(`¿Eliminar ${P.ref} definitivamente?`)) return;
+  try{ await api("admin/products/"+P.id,{method:"DELETE"}); PRODUCTS = PRODUCTS.filter(p=>p.id!==P.id); $("#pOv").classList.remove("on"); renderProducts(); toast("Prenda eliminada"); }
+  catch(e){ if (e.message!=="401") toast(e.message); }
+};
+$("#newBtn").onclick = () => openEditor(null);
+$$("[data-close]").forEach(b => b.addEventListener("click", () => $("#"+b.dataset.close).classList.remove("on")));
+
+// ---------- llegó mercancía (carga masiva) ----------
+let BULK = []; let bMode = "one";
+$("#bMode").onclick = e => { const b=e.target.closest("[data-m]"); if(!b) return; bMode=b.dataset.m; $$("#bMode button").forEach(x=>x.classList.toggle("on",x===b)); };
+const drop = $("#drop");
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.style.borderColor="var(--navy)"; });
+drop.addEventListener("dragleave", () => drop.style.borderColor="");
+drop.addEventListener("drop", e => { e.preventDefault(); drop.style.borderColor=""; addBulk([...e.dataTransfer.files].filter(f=>f.type.startsWith("image/"))); });
+$("#bFiles").onchange = e => { addBulk([...e.target.files]); e.target.value=""; };
+
+async function addBulk(files){
+  if (!files.length) return;
+  const cat = $("#bCat").value, price = money($("#bPrice").value);
+  const defSize = (SETTINGS.sizes||["M"])[2] || "M";
+  const mk = () => ({ name:"", category:cat, price, size:"", stock:1, photos:[] });
+  let rows = bMode==="group" ? [mk()] : files.map(mk);
+  BULK.push(...rows); drawBulk();
+  for (let i=0;i<files.length;i++){
+    const row = bMode==="group" ? rows[0] : rows[i];
+    const ph = {thumb:"data:image/gif;base64,R0lGODlhAQABAAAAACw=", loading:true};
+    row.photos.push(ph); drawBulk();
+    try{ Object.assign(ph, await photoFromFile(files[i])); }catch(e){ row.photos.splice(row.photos.indexOf(ph),1); }
+    ph.loading = false; drawBulk();
+  }
+}
+function drawBulk(){
+  const sizes = SETTINGS.sizes || ["XS","S","M","L","XL","XXL"];
+  const cats = [...new Set([...(SETTINGS.categories||[]), ...PRODUCTS.map(p=>p.category)])];
+  $("#bulkList").innerHTML = BULK.map((r,i)=>`
+    <div class="brow" data-r="${i}">
+      <div class="ph">${r.photos[0]?`<img src="${esc(r.photos[0].thumb)}" data-ph="${i}" alt="">`:""}<span class="n">#${i+1}</span>
+        ${r.photos.some(p=>p.loading)?`<div class="more">✨ Editando…</div>`:r.photos.length>1?`<div class="more">${r.photos.length} fotos</div>`:`<div class="more">Toca para ajustar</div>`}
+      </div>
+      <div class="fl">
+        <input class="full" data-k="name" value="${esc(r.name)}" placeholder="Nombre (ej: Buzo gris con capota)">
+        <input data-k="price" inputmode="numeric" value="${r.price?Number(r.price).toLocaleString("es-CO"):""}" placeholder="Precio">
+        <select data-k="size"><option value="">Talla…</option>${sizes.map(s=>`<option ${r.size===s?"selected":""}>${esc(s)}</option>`).join("")}</select>
+        <select data-k="category">${cats.map(c=>`<option ${r.category===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+        <input data-k="stock" type="number" min="1" value="${r.stock}" title="Cantidad">
+        <button class="rmv" data-del="${i}">Quitar</button>
+      </div>
+    </div>`).join("");
+  const ready = BULK.filter(r=>r.size && r.photos.length).length;
+  $("#bulkInfo").textContent = `${BULK.length} prenda${BULK.length===1?"":"s"} · ${ready} lista${ready===1?"":"s"}`;
+  $("#bulkBar").classList.toggle("on", BULK.length>0 && $("#tab-bulk").classList.contains("on"));
+}
+$("#bulkList").addEventListener("input", e => {
+  const row = e.target.closest("[data-r]"); const k = e.target.dataset.k; if (!row||!k) return;
+  const r = BULK[Number(row.dataset.r)];
+  r[k] = k==="price" ? money(e.target.value) : k==="stock" ? Math.max(1,Number(e.target.value)||1) : e.target.value;
+  if (k==="size"||k==="category"){ const ready = BULK.filter(r=>r.size && r.photos.length).length; $("#bulkInfo").textContent = `${BULK.length} prendas · ${ready} listas`; }
+});
+$("#bulkList").addEventListener("click", e => {
+  const d = e.target.closest("[data-del]"); if (d){ BULK.splice(Number(d.dataset.del),1); return drawBulk(); }
+  const ph = e.target.closest("[data-ph]"); if (ph){ const it = BULK[Number(ph.dataset.ph)].photos[0]; if (!it.loading) openPhotoEditor(it, drawBulk); }
+});
+$("#bulkClear").onclick = () => { if (confirm("¿Vaciar la lista?")){ BULK=[]; drawBulk(); } };
+$("#bulkSave").onclick = async () => {
+  if (BULK.some(r=>r.photos.some(p=>p.loading))) return toast("Espera, todavía se están editando fotos…");
+  const missing = BULK.findIndex(r=>!r.size);
+  if (missing>=0){ toast(`Falta la talla en la prenda #${missing+1}`); $$(".brow")[missing]?.scrollIntoView({behavior:"smooth",block:"center"}); return; }
+  const total = BULK.reduce((a,r)=>a+r.photos.length,0); let done = 0;
+  const bar = $("#bulkProg"), btn = $("#bulkSave"); bar.hidden = false; btn.disabled = true;
+  try{
+    const out = [];
+    for (const r of BULK){
+      const photos = [];
+      for (const ph of r.photos){ photos.push(await uploadPhoto(ph)); done++; bar.firstElementChild.style.width = (done/total*100)+"%"; btn.textContent = `Subiendo ${done}/${total}`; }
+      out.push({ name: r.name.trim() || `${r.category.replace(/s$/,"")} talla ${r.size}`, category:r.category, price:r.price, sizes:[{size:r.size, stock:r.stock}], photos, status:"available" });
+    }
+    btn.textContent = "Publicando…";
+    const d = await api("admin/products",{method:"POST", body:JSON.stringify(out)});
+    PRODUCTS = [...[...d.products].reverse(), ...PRODUCTS]; BULK = []; drawBulk(); renderProducts(); fillSelects();
+    toast(d.products.length===1?`¡Publicada como ${d.products[0].ref}!`:`¡${d.products.length} prendas publicadas! (${d.products[0].ref} a ${d.products[d.products.length-1].ref})`, 3500);
+    $$("nav.tabs button")[0].click();
+  }catch(e){ if (e.message!=="401") toast("Error: "+e.message, 4000); }
+  bar.hidden = true; btn.disabled = false; btn.textContent = "Publicar todo";
+};
+
+// ---------- pedidos ----------
+async function loadOrders(){
+  try{ const d = await api("admin/orders"); ORDERS = d.orders; renderOrders(); }catch(e){}
+}
+function renderOrders(){
+  const n = ORDERS.filter(o=>o.status==="new").length;
+  $("#ordersN").hidden = !n; $("#ordersN").textContent = n;
+  if (!ORDERS.length){ $("#olist").innerHTML = `<div class="empty">Todavía no hay pedidos.</div>`; return; }
+  const lbl = {new:"Nuevo", confirmed:"Venta confirmada", cancelled:"Cancelado"};
+  $("#olist").innerHTML = ORDERS.map(o=>{
+    const phone = (o.customer.phone||"").replace(/\D/g,""); const wa = phone ? (phone.length===10?"57"+phone:phone) : "";
+    return `<div class="order">
+      <div class="top"><div><b>#${esc(o.id)}</b> · ${new Date(o.createdAt).toLocaleString("es-CO",{dateStyle:"medium",timeStyle:"short"})}</div><span class="tag st-${o.status}">${lbl[o.status]}</span></div>
+      <div><b>${esc(o.customer.name)}</b>${o.customer.phone?` · ${esc(o.customer.phone)}`:""}<br><span class="help">${esc(o.customer.city)}${o.customer.address?" — "+esc(o.customer.address):""}${o.customer.payment?" · "+esc(o.customer.payment):""}</span>${o.customer.notes?`<br><span class="help">📝 ${esc(o.customer.notes)}</span>`:""}</div>
+      <div class="lines">${o.items.map(i=>`<div>${esc(i.ref)} — ${esc(i.name)} · Talla ${esc(i.size)}${i.qty>1?` ×${i.qty}`:""} <b style="float:right">${fmt(i.price*i.qty)||"—"}</b></div>`).join("")}</div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--navy)"><span>Total</span><span>${fmt(o.total)||"Por confirmar"}</span></div>
+      <div class="acts">
+        ${o.status!=="confirmed"?`<button class="btn p sm" data-oc="${o.id}">✓ Confirmar venta</button>`:""}
+        ${o.status==="new"?`<button class="btn g sm" data-ox="${o.id}">Cancelar</button>`:""}
+        ${wa?`<a class="btn w sm" target="_blank" href="https://wa.me/${wa}">WhatsApp cliente</a>`:""}
+        <button class="btn g sm" data-od="${o.id}">Borrar</button>
+      </div>
+    </div>`;}).join("");
+}
+$("#olist").addEventListener("click", async e => {
+  const c = e.target.closest("[data-oc]"), x = e.target.closest("[data-ox]"), d = e.target.closest("[data-od]");
+  try{
+    if (c){ if(!confirm("¿Confirmar la venta? Se descontará del inventario.")) return; await api("admin/orders/"+c.dataset.oc,{method:"PUT",body:JSON.stringify({status:"confirmed"})}); toast("Venta confirmada ✓"); const r = await api("admin/products"); PRODUCTS = r.products; renderProducts(); }
+    if (x){ await api("admin/orders/"+x.dataset.ox,{method:"PUT",body:JSON.stringify({status:"cancelled"})}); toast("Pedido cancelado"); }
+    if (d){ if(!confirm("¿Borrar este pedido del historial?")) return; await api("admin/orders/"+d.dataset.od,{method:"DELETE"}); }
+    if (c||x||d) loadOrders();
+  }catch(err){ if (err.message!=="401") toast(err.message); }
+});
+
+// ---------- ajustes ----------
+let setCats = [], setSizes = [];
+function fillSettings(){
+  const f = $("#setForm");
+  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo"].forEach(k => f[k].value = SETTINGS[k]||"");
+  if (f.whatsapp.value.startsWith("57") && f.whatsapp.value.length===12) f.whatsapp.value = f.whatsapp.value.slice(2);
+  f.watermark.checked = SETTINGS.watermark !== false; f.newPassword.value = "";
+  setCats = [...(SETTINGS.categories||[])]; setSizes = [...(SETTINGS.sizes||[])]; drawChips();
+}
+function drawChips(){
+  $("#catChips").innerHTML = setCats.map((c,i)=>`<span>${esc(c)}<button type="button" data-rc="${i}">✕</button></span>`).join("");
+  $("#sizeChips").innerHTML = setSizes.map((c,i)=>`<span>${esc(c)}<button type="button" data-rz="${i}">✕</button></span>`).join("");
+}
+$("#catChips").onclick = e => { const b=e.target.closest("[data-rc]"); if(b){ setCats.splice(Number(b.dataset.rc),1); drawChips(); } };
+$("#sizeChips").onclick = e => { const b=e.target.closest("[data-rz]"); if(b){ setSizes.splice(Number(b.dataset.rz),1); drawChips(); } };
+$("#addCat").onclick = () => { const v=$("#newCat").value.trim(); if(v && !setCats.includes(v)) setCats.push(v); $("#newCat").value=""; drawChips(); };
+$("#addSize").onclick = () => { $("#newSize").value.split(",").map(s=>s.trim().toUpperCase()).filter(Boolean).forEach(v=>{ if(!setSizes.includes(v)) setSizes.push(v); }); $("#newSize").value=""; drawChips(); };
+$("#setForm").onsubmit = async e => {
+  e.preventDefault(); const f = e.target;
+  const body = { categories:setCats, sizes:setSizes, watermark:f.watermark.checked };
+  ["whatsapp","instagram","storeName","refPrefix","tagline","announcement","paymentInfo","shippingInfo"].forEach(k => body[k] = f[k].value);
+  if (f.newPassword.value) body.newPassword = f.newPassword.value;
+  try{
+    const d = await api("admin/settings",{method:"PUT", body:JSON.stringify(body)});
+    SETTINGS = d.settings;
+    if (body.newPassword){ PASS = body.newPassword; try{ localStorage.setItem("usa2admin", PASS); }catch(e){} }
+    fillSelects(); fillSettings(); toast("Ajustes guardados ✓");
+  }catch(err){ if (err.message!=="401") toast(err.message); }
+};
+
+// ---------- inicio ----------
+if (PASS){ fetch("/api/login",{method:"POST",headers:{"x-admin-password":PASS}}).then(r=> r.ok ? start() : showLogin()).catch(()=>showLogin("Sin conexión")); }
+else showLogin();
+</script>
+</body>
+</html>
