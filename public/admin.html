@@ -163,7 +163,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
   <form class="card" id="loginForm">
     <img src="/assets/logo.jpg" alt="USA2">
     <h2 style="margin:0;color:var(--navy)">Panel de administración</h2>
-    <input class="in" type="password" id="pass" placeholder="Contraseña" autocomplete="current-password" required>
+    <input class="in" type="password" id="pass" placeholder="Contraseña" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
     <button class="btn p">Entrar</button>
     <div class="help" id="loginErr"></div>
   </form>
@@ -322,7 +322,7 @@ async function api(path, opts={}){
 function showLogin(msg=""){ $("#app").hidden = true; $("#loginView").hidden = false; $("#loginErr").textContent = msg; }
 $("#loginForm").onsubmit = async e => {
   e.preventDefault();
-  PASS = $("#pass").value;
+  PASS = $("#pass").value.trim();
   const r = await fetch("/api/login",{method:"POST",headers:{"x-admin-password":PASS}});
   if (!r.ok){ $("#loginErr").textContent = "Contraseña incorrecta"; return; }
   try{ localStorage.setItem("usa2admin", PASS); }catch(e){}
