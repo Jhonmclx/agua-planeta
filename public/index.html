@@ -34,7 +34,7 @@ button{cursor:pointer}
 header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);flex-shrink:0}
-.brand img{height:44px;width:44px}
+.brand img{height:40px;width:auto;border-radius:8px;box-shadow:0 0 0 2px #fff,0 4px 12px rgba(20,104,255,.25)}
 .brand b{display:block;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:22px;line-height:1;background:linear-gradient(90deg,var(--navy-2),var(--violet) 60%,var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand small{display:none}
 .search{flex:1;position:relative;min-width:0}
@@ -43,7 +43,7 @@ header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);bac
 .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .cart-btn{position:relative;border:0;background:linear-gradient(135deg,var(--navy-2),var(--violet));box-shadow:0 6px 18px rgba(20,104,255,.35);color:#fff;border-radius:999px;height:42px;padding:0 16px;display:flex;align-items:center;gap:8px;font-weight:600;flex-shrink:0}
 .cart-btn .n{background:var(--sun);color:var(--ink);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
-@media(max-width:620px){.brand small{display:none}.brand b{font-size:18px}.brand img{height:38px;width:38px}.cart-btn .clbl{display:none}.cart-btn{padding:0 12px}}
+@media(max-width:620px){.brand small{display:none}.brand b{font-size:18px}.brand img{height:34px}.cart-btn .clbl{display:none}.cart-btn{padding:0 12px}}
 
 /* héroe */
 .hero{max-width:1200px;margin:16px auto 0;padding:0 16px}
@@ -66,7 +66,7 @@ header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);bac
 .c1{width:42%;aspect-ratio:3/4;left:6%;top:12%;transform:rotate(-8deg)}
 .c2{width:44%;aspect-ratio:3/4;left:34%;top:6%;transform:rotate(4deg);z-index:2}
 .c3{width:38%;aspect-ratio:3/4;right:4%;top:30%;transform:rotate(10deg)}
-.collage .planet{border:0;box-shadow:none;background:none;width:96px;height:96px;left:2%;bottom:6%;z-index:3;border-radius:0;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25));animation:float 5s ease-in-out infinite}
+.collage .planet{width:150px;height:auto;aspect-ratio:auto;left:2%;bottom:8%;z-index:3;border-radius:12px;border:3px solid #fff;animation:float 5s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-10px) rotate(6deg)}}
 @media(max-width:720px){
   .hero-card{grid-template-columns:1fr;min-height:0}
@@ -75,7 +75,7 @@ header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);bac
   .hero p{font-size:15px}
   .collage{min-height:210px;margin:0 10px 18px}
   .c1{width:34%;left:4%;top:8%}.c2{width:36%;left:32%;top:2%}.c3{width:32%;right:3%;top:14%}
-  .collage .planet{width:64px;height:64px;left:auto;right:4%;bottom:0}
+  .collage .planet{width:110px;left:auto;right:4%;bottom:0}
 }
 
 /* filtros */
@@ -191,7 +191,7 @@ footer a{color:#fff}
 <div class="announce" id="announce" hidden></div>
 <header class="top">
   <div class="top-in">
-    <a class="brand" href="/"><img src="/assets/logo.svg" alt=""><span><b id="brandName">Agua Planeta</b><small id="tagline">Ropa americana y nacional</small></span></a>
+    <a class="brand" href="/"><img src="/assets/logo.jpg" alt="USA2"><span><b id="brandName">Agua Planeta</b><small id="tagline">Ropa americana y nacional</small></span></a>
     <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar prenda o referencia…" autocomplete="off"></label>
     <button class="cart-btn" id="openCart" aria-label="Carrito"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="clbl">Carrito</span><span class="n" id="cartN">0</span></button>
   </div>
@@ -207,7 +207,7 @@ footer a{color:#fff}
       <p id="heroTag">Ropa americana y nacional con estilo, a precios que te encantan.</p>
       <div class="hero-cta"><a class="pill sun" href="#catalogo">Ver catálogo</a><a class="pill" id="heroWa" href="#" target="_blank" rel="noopener">Escríbenos</a></div>
     </div>
-    <div class="collage" id="collage"><img class="c1" alt=""><img class="c2" alt=""><img class="c3" alt=""><img class="planet" src="/assets/logo.svg" alt=""></div>
+    <div class="collage" id="collage"><img class="c1" alt=""><img class="c2" alt=""><img class="c3" alt=""><img class="planet" src="/assets/logo.jpg" alt="USA2"></div>
   </div>
 </section>
 
@@ -230,7 +230,7 @@ footer a{color:#fff}
 </main>
 
 <footer>
-  <img src="/assets/logo.svg" alt="" style="width:64px;height:64px;margin:0 auto 6px"><div class="varsity" id="ftName">Agua Planeta</div>
+  <img src="/assets/logo.jpg" alt="USA2" style="height:56px;margin:0 auto 8px;border-radius:10px;border:3px solid #fff"><div class="varsity" id="ftName">Agua Planeta</div>
   <p id="ftTag">Ropa americana y nacional</p>
   <p id="ftPay"></p>
   <p id="ftShip"></p>

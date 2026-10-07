@@ -1,6 +1,6 @@
 // Edición automática de fotos de ropa (todo ocurre en el celular/PC, antes de subir)
 // - Corrige orientación, recorta a 3:4, ajusta niveles/blancos, luz, color y nitidez
-// - Agrega marca de agua Agua Planeta opcional
+// - Agrega el logo USA2 como marca de agua (opcional)
 // - Permite ajustes manuales con sliders
 
 export const DEFAULT_ADJ = { auto: true, brightness: 0, contrast: 0, saturation: 0, warmth: 0, sharpen: 35, rotate: 0, crop: "3:4", zoom: 1, offsetX: 0, offsetY: 0, watermark: true };
@@ -90,30 +90,23 @@ function sharpen(img, w, h, amount) {
   }
 }
 
-let wmFontReady = null;
+let logoReady = null;
 async function ensureFont() {
-  if (!wmFontReady) wmFontReady = document.fonts ? document.fonts.load('800 40px "Baloo 2"').catch(() => {}) : Promise.resolve();
-  return wmFontReady;
+  if (!logoReady) logoReady = new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = "/assets/logo.jpg"; });
+  return logoReady;
 }
 
-function drawWatermark(ctx, w, h) {
-  const s = Math.round(Math.min(w, h) * 0.045);
+function drawWatermark(ctx, w, h, logo) {
+  if (!logo) return;
+  const lw = Math.round(w * 0.26), lh = Math.round(lw * logo.height / logo.width);
+  const m = Math.round(w * 0.035), x = w - lw - m, y = h - lh - m, r = lh * 0.14, b = Math.max(2, Math.round(lw * 0.018));
   ctx.save();
-  ctx.font = `800 ${s}px "Baloo 2", "Arial Black", sans-serif`;
-  const text = "Agua Planeta";
-  const tw = ctx.measureText(text).width;
-  const dot = s * 0.9;
-  const padX = s * 0.55, padY = s * 0.3;
-  const bw = tw + padX * 2 + dot + s * 0.35, bh = s + padY * 2;
-  const x = w - bw - s * 0.6, y = h - bh - s * 0.6;
-  const g = ctx.createLinearGradient(x, y, x + bw, y + bh);
-  g.addColorStop(0, "#00d4c8"); g.addColorStop(0.5, "#1468ff"); g.addColorStop(1, "#7b2ff7");
-  ctx.globalAlpha = 0.9; ctx.fillStyle = g;
-  roundRect(ctx, x, y, bw, bh, bh / 2); ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = "#ffd23f"; ctx.beginPath(); ctx.arc(x + padX + dot / 2, y + bh / 2, dot / 2, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#fff"; ctx.textBaseline = "middle";
-  ctx.fillText(text, x + padX + dot + s * 0.35, y + bh / 2 + s * 0.05);
+  ctx.globalAlpha = 0.92;
+  ctx.shadowColor = "rgba(0,0,0,.25)"; ctx.shadowBlur = b * 3;
+  ctx.fillStyle = "#fff"; roundRect(ctx, x - b, y - b, lw + b * 2, lh + b * 2, r + b); ctx.fill();
+  ctx.shadowColor = "transparent";
+  roundRect(ctx, x, y, lw, lh, r); ctx.clip();
+  ctx.drawImage(logo, x, y, lw, lh);
   ctx.restore();
 }
 function roundRect(ctx, x, y, w, h, r) {
@@ -123,7 +116,7 @@ function roundRect(ctx, x, y, w, h, r) {
 
 // Dibuja la imagen editada en un canvas. maxSide controla la resolución final.
 export async function render(bitmap, adj = DEFAULT_ADJ, maxSide = 1400) {
-  await ensureFont();
+  const logo = await ensureFont();
   const rot = ((adj.rotate % 360) + 360) % 360;
   const sw0 = bitmap.width, sh0 = bitmap.height;
   const rw = rot % 180 ? sh0 : sw0, rh = rot % 180 ? sw0 : sh0; // tamaño ya rotado
@@ -177,7 +170,7 @@ export async function render(bitmap, adj = DEFAULT_ADJ, maxSide = 1400) {
   sharpen(img, ow, oh, adj.sharpen);
   ctx.putImageData(img, 0, 0);
 
-  if (adj.watermark) drawWatermark(ctx, ow, oh);
+  if (adj.watermark) drawWatermark(ctx, ow, oh, logo);
   return c;
 }
 
