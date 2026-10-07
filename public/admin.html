@@ -7,7 +7,10 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#1468ff">
 <link rel="icon" href="/assets/icon.png">
-<link rel="apple-touch-icon" href="/assets/icon.png">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
+<link rel="manifest" href="/admin-manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -708,5 +711,6 @@ $("#setForm").onsubmit = async e => {
 if (PASS){ fetch("/api/login",{method:"POST",headers:{"x-admin-password":PASS}}).then(r=> r.ok ? start() : showLogin()).catch(()=>showLogin("Sin conexión")); }
 else showLogin();
 </script>
+<script>if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));</script>
 </body>
 </html>
