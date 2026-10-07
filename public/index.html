@@ -7,7 +7,7 @@
 <meta name="description" content="Agua Planeta — Ropa americana y nacional. Buzos, chaquetas y más. Arma tu pedido y envíalo por WhatsApp.">
 <meta property="og:title" content="Agua Planeta · Ropa con buena onda">
 <meta property="og:description" content="Prendas únicas seleccionadas. Arma tu pedido y envíalo por WhatsApp.">
-<meta property="og:image" content="/assets/icon.png">
+<meta property="og:image" content="/assets/banner.jpg">
 <meta name="theme-color" content="#1468ff">
 <link rel="icon" href="/assets/icon.png">
 <link rel="apple-touch-icon" href="/assets/icon.png">
@@ -78,6 +78,10 @@ header.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);bac
   .collage .planet{width:110px;left:auto;right:4%;bottom:0}
 }
 
+.banner{padding:18px 0 18px 18px;display:flex;align-items:center}
+.banner img{width:100%;border-radius:20px;border:4px solid #fff;box-shadow:0 14px 30px rgba(10,20,80,.35)}
+.hero-card{grid-template-columns:1.15fr 1fr!important}
+@media(max-width:720px){.hero-card{grid-template-columns:1fr!important}.banner{padding:12px 12px 0}.hero h1{font-size:40px}.hero-txt{padding:18px 20px 30px}}
 /* filtros */
 .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
 .filters{position:sticky;top:65px;z-index:20;background:var(--cream);padding:14px 0 10px}
@@ -201,13 +205,14 @@ footer a{color:#fff}
   <div class="hero-card">
     <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
     <svg class="waves" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 60c100-40 200-40 300 0s200 40 300 0 200-40 300 0 200 40 300 0v60H0z" fill="rgba(255,255,255,.18)"/><path d="M0 80c100-30 200-30 300 0s200 30 300 0 200-30 300 0 200 30 300 0v40H0z" fill="rgba(255,255,255,.28)"/></svg>
+    <div class="banner"><img src="/assets/banner.jpg" alt="USA2 compraventa de ropa americana y nacional"></div>
     <div class="hero-txt">
       <span class="kicker">✨ Nueva mercancía cada semana</span>
       <h1 id="heroName">Agua Planeta</h1>
       <p id="heroTag">Ropa americana y nacional con estilo, a precios que te encantan.</p>
       <div class="hero-cta"><a class="pill sun" href="#catalogo">Ver catálogo</a><a class="pill" id="heroWa" href="#" target="_blank" rel="noopener">Escríbenos</a></div>
     </div>
-    <div class="collage" id="collage"><img class="c1" alt=""><img class="c2" alt=""><img class="c3" alt=""><img class="planet" src="/assets/logo.jpg" alt="USA2"></div>
+    
   </div>
 </section>
 
@@ -276,8 +281,6 @@ async function load(){
     $("#grid").innerHTML = `<div class="empty" style="grid-column:1/-1">No pudimos cargar el catálogo. Revisa tu conexión e intenta de nuevo.</div>`;
     return;
   }
-  const pics = P.filter(p=>!p.soldOut).sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)||b.createdAt-a.createdAt).slice(0,3);
-  ["c1","c2","c3"].forEach((c,i)=>{ if (pics[i]) document.querySelector("#collage ."+c).src = pics[i].photos[0]; });
   ["#brandName","#heroName","#ftName"].forEach(id=>$(id).textContent = S.storeName);
   document.title = S.storeName + " · Tienda de ropa";
   if (S.announcement){ $("#announce").textContent = S.announcement; $("#announce").hidden = false; }
