@@ -210,7 +210,7 @@ export default async (req: Request, context: Context) => {
       return json(
         { settings: publicSettings(settings), products: visible.map(publicView) },
         200,
-        { "cache-control": "public, max-age=0, s-maxage=20" }
+        { "cache-control": "no-store" }
       );
     }
 

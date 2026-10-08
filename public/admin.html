@@ -383,7 +383,16 @@ function toast(t, ms=2200){ const el=$("#toast"); el.textContent=t; el.classList
 let PASS = ""; try { PASS = localStorage.getItem("usa2admin") || ""; } catch(e){}
 let PRODUCTS = [], SETTINGS = {}, ORDERS = [];
 
-async function api(path, opts={}){
+let WRITE_Q = Promise.resolve();
+function api(path, opts={}){
+  const m = (opts.method||"GET").toUpperCase();
+  if (m === "GET") return apiRaw(path, opts);
+  // los cambios se envían uno por uno para que no se pisen entre sí
+  const run = WRITE_Q.then(() => apiRaw(path, opts));
+  WRITE_Q = run.catch(() => {});
+  return run;
+}
+async function apiRaw(path, opts={}){
   const r = await fetch("/api/"+path, {...opts, headers:{"x-admin-password":PASS, ...(opts.body && !(opts.body instanceof Blob) ? {"content-type":"application/json"}:{}), ...(opts.headers||{})}});
   if (r.status === 401){ showLogin("Tu sesión expiró. Entra de nuevo."); throw new Error("401"); }
   const d = await r.json().catch(()=>({}));
@@ -509,10 +518,23 @@ async function toggleQuick(kind, p){
     }catch(err){ if (err.message!=="401") toast(err.message); }
   }
 }
+let softT;
+function renderProductsSoon(){
+  clearTimeout(softT);
+  softT = setTimeout(() => {
+    const a = document.activeElement;
+    if (a && a.matches && a.matches("[data-price]")) return renderProductsSoon();
+    renderProducts();
+  }, 800);
+}
 async function quickUpdate(id, patch, msg){
   try{
     const d = await api("admin/products/"+id, {method:"PUT", body:JSON.stringify(patch)});
-    PRODUCTS = PRODUCTS.map(p=>p.id===id?d.product:p); renderProducts(); toast(msg);
+    PRODUCTS = PRODUCTS.map(p=>p.id===id?d.product:p);
+    // si ella está escribiendo otro precio, no redibujar la lista (se borraría lo que escribe)
+    const typing = document.activeElement && document.activeElement.matches && document.activeElement.matches("[data-price]");
+    if (typing) renderProductsSoon(); else renderProducts();
+    toast(msg);
   }catch(e){ if (e.message!=="401") toast("No se pudo guardar: "+e.message); }
 }
 
