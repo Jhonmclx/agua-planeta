@@ -1,6 +1,7 @@
 import { getStore } from "@netlify/blobs";
 import type { Config, Context } from "@netlify/functions";
 import seed from "../lib/seed-data.mts";
+import IMPORTS from "../lib/imports.mts";
 
 // ---------- tipos ----------
 type Size = { size: string; stock: number };
@@ -83,11 +84,30 @@ async function getSettings(): Promise<Settings> {
 }
 
 async function getProducts(): Promise<Product[]> {
-  const p = (await store().get("products", { type: "json" })) as Product[] | null;
-  if (p) return p;
-  const initial = seed as Product[];
-  await store().setJSON("products", initial);
-  return initial;
+  let p = (await store().get("products", { type: "json" })) as Product[] | null;
+  if (!p) {
+    p = seed as Product[];
+    await store().setJSON("products", p);
+  }
+  return applyImports(p);
+}
+
+// Agrega una sola vez los lotes nuevos de prendas (sin tocar las existentes)
+async function applyImports(products: Product[]): Promise<Product[]> {
+  const applied = ((await store().get("imports-applied", { type: "json" })) as string[] | null) || [];
+  const pending = (IMPORTS as { id: string; products: Product[] }[]).filter((b) => !applied.includes(b.id));
+  if (!pending.length) return products;
+  const have = new Set(products.flatMap((x) => [x.ref, x.id]));
+  const added: Product[] = [];
+  for (const b of pending) for (const item of b.products) {
+    if (have.has(item.ref) || have.has(item.id)) continue;
+    added.push({ ...item, createdAt: Date.now() - added.length });
+    have.add(item.ref); have.add(item.id);
+  }
+  const next = [...added, ...products];
+  await store().setJSON("products", next);
+  await store().setJSON("imports-applied", [...applied, ...pending.map((b) => b.id)]);
+  return next;
 }
 const saveProducts = (p: Product[]) => store().setJSON("products", p);
 
