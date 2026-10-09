@@ -1135,5 +1135,6 @@ export default [
     "createdAt": 1791547200038
    }
   ]
- }
+ },
+ {"id":"chaquetas-estado-2026-10-09","patch":{"refPrefix":"CH-","set":{"condition":"buen-estado"},"onlyIfEmpty":true}}
 ];
