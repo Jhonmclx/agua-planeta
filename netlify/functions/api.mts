@@ -97,7 +97,7 @@ async function getProducts(): Promise<Product[]> {
 // Agrega una sola vez los lotes nuevos de prendas (sin tocar las existentes)
 async function applyImports(products: Product[]): Promise<Product[]> {
   const applied = ((await store().get("imports-applied", { type: "json" })) as string[] | null) || [];
-  type Batch = { id: string; products?: Product[]; patch?: { refPrefix: string; set: Partial<Product>; onlyIfEmpty?: boolean }; replacePhotos?: Record<string, string> };
+  type Batch = { id: string; products?: Product[]; patch?: { refPrefix?: string; ref?: string; set: Partial<Product>; onlyIfEmpty?: boolean }; replacePhotos?: Record<string, string> };
   const pending = (IMPORTS as Batch[]).filter((b) => !applied.includes(b.id));
   if (!pending.length) return products;
   const have = new Set(products.flatMap((x) => [x.ref, x.id]));
@@ -115,7 +115,7 @@ async function applyImports(products: Product[]): Promise<Product[]> {
   // cambios en bloque (solo llena campos vacíos si onlyIfEmpty)
   for (const b of pending) if (b.patch) {
     for (const p of next) {
-      if (!p.ref.startsWith(b.patch.refPrefix)) continue;
+      if (b.patch.ref ? p.ref !== b.patch.ref : !p.ref.startsWith(b.patch.refPrefix || "\u0000")) continue;
       for (const [k, v] of Object.entries(b.patch.set)) {
         if (b.patch.onlyIfEmpty && (p as any)[k]) continue;
         (p as any)[k] = v;
