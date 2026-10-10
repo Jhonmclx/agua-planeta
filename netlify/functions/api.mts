@@ -95,7 +95,7 @@ async function getProducts(): Promise<Product[]> {
 // Agrega una sola vez los lotes nuevos de prendas (sin tocar las existentes)
 async function applyImports(products: Product[]): Promise<Product[]> {
   const applied = ((await store().get("imports-applied", { type: "json" })) as string[] | null) || [];
-  type Batch = { id: string; products?: Product[]; patch?: { refPrefix: string; set: Partial<Product>; onlyIfEmpty?: boolean } };
+  type Batch = { id: string; products?: Product[]; patch?: { refPrefix: string; set: Partial<Product>; onlyIfEmpty?: boolean }; replacePhotos?: Record<string, string> };
   const pending = (IMPORTS as Batch[]).filter((b) => !applied.includes(b.id));
   if (!pending.length) return products;
   const have = new Set(products.flatMap((x) => [x.ref, x.id]));
@@ -106,6 +106,10 @@ async function applyImports(products: Product[]): Promise<Product[]> {
     have.add(item.ref); have.add(item.id);
   }
   const next = [...added, ...products];
+  // fotos mejoradas: solo cambia la foto si la prenda todavía tiene la original
+  for (const b of pending) if (b.replacePhotos) {
+    for (const p of next) p.photos = p.photos.map((ph) => b.replacePhotos![ph] || ph);
+  }
   // cambios en bloque (solo llena campos vacíos si onlyIfEmpty)
   for (const b of pending) if (b.patch) {
     for (const p of next) {

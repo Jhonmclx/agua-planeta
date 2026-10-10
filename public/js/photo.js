@@ -34,8 +34,8 @@ function analyze(data) {
   const lo = [pct(hr, 0.005), pct(hg, 0.005), pct(hb, 0.005)];
   const hi = [pct(hr, 0.995), pct(hg, 0.995), pct(hb, 0.995)];
   const lLo = pct(hl, 0.005), lHi = pct(hl, 0.995);
-  let sum = 0; for (let i = 0; i < 256; i++) sum += hl[i] * i;
-  return { lo, hi, lLo, lHi, mean: sum / n / 255 };
+  let sum = 0, dark = 0; for (let i = 0; i < 256; i++) { sum += hl[i] * i; if (i < 70) dark += hl[i]; }
+  return { lo, hi, lLo, lHi, mean: sum / n / 255, darkFrac: dark / n };
 }
 
 function buildLUTs(stats, adj) {
@@ -49,20 +49,22 @@ function buildLUTs(stats, adj) {
     gamma = Math.min(1.35, Math.max(0.72, gamma));
   }
   const bright = adj.brightness / 100; // -0.5..0.5
-  const contrast = 1 + adj.contrast / 100 + (adj.auto ? 0.06 : 0);
+  const darkSubject = adj.auto && stats && stats.darkFrac > 0.12; // prenda oscura: no hundir las sombras
+  const contrast = 1 + adj.contrast / 100 + (adj.auto && !darkSubject ? 0.06 : 0);
   const warm = adj.warmth / 100;
   for (let c = 0; c < 3; c++) {
     let lo = 0, hi = 255;
     if (adj.auto && stats) {
       lo = stats.lLo * (1 - wb) + stats.lo[c] * wb;
       hi = stats.lHi * (1 - wb) + stats.hi[c] * wb;
-      lo = Math.min(lo, 60); hi = Math.max(hi, 170);
+      lo = Math.min(lo, darkSubject ? 10 : 60); hi = Math.max(hi, 170);
       if (hi - lo < 40) { lo = 0; hi = 255; }
     }
     for (let i = 0; i < 256; i++) {
       let v = (i - lo) / (hi - lo);
       v = clamp(v, 0, 1);
       v = Math.pow(v, 1 / gamma);
+      if (darkSubject) v = v + 0.75 * v * (1 - v) * (1 - v); // levanta sombras para ver el detalle
       v = (v - 0.5) * contrast + 0.5 + bright * 0.6;
       if (c === 0) v += warm * 0.08;
       if (c === 2) v -= warm * 0.08;
@@ -70,6 +72,55 @@ function buildLUTs(stats, adj) {
     }
   }
   return luts;
+}
+
+// Quita manchas de color en prendas oscuras (ruido de cámara con poca luz)
+// sin tocar estampados, letras ni detalles de color.
+function boxBlur(src, w, h, r) {
+  const tmp = new Float32Array(src.length), out = new Float32Array(src.length);
+  const k = 2 * r + 1;
+  for (let y = 0; y < h; y++) {
+    let acc = 0; const row = y * w;
+    for (let x = -r; x <= r; x++) acc += src[row + Math.min(w - 1, Math.max(0, x))];
+    for (let x = 0; x < w; x++) {
+      tmp[row + x] = acc / k;
+      acc += src[row + Math.min(w - 1, x + r + 1)] - src[row + Math.max(0, x - r)];
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let acc = 0;
+    for (let y = -r; y <= r; y++) acc += tmp[Math.min(h - 1, Math.max(0, y)) * w + x];
+    for (let y = 0; y < h; y++) {
+      out[y * w + x] = acc / k;
+      acc += tmp[Math.min(h - 1, y + r + 1) * w + x] - tmp[Math.max(0, y - r) * w + x];
+    }
+  }
+  return out;
+}
+function cleanBlotches(img, w, h) {
+  const d = img.data, n = w * h;
+  const Y = new Float32Array(n), Cb = new Float32Array(n), Cr = new Float32Array(n);
+  for (let i = 0, j = 0; j < n; i += 4, j++) {
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    Y[j] = 0.299 * r + 0.587 * g + 0.114 * b;
+    Cb[j] = -0.1687 * r - 0.3313 * g + 0.5 * b;
+    Cr[j] = 0.5 * r - 0.4187 * g - 0.0813 * b;
+  }
+  const rad = Math.max(4, Math.round(Math.min(w, h) * 0.012));
+  let bCb = boxBlur(Cb, w, h, rad), bCr = boxBlur(Cr, w, h, rad);
+  bCb = boxBlur(bCb, w, h, rad); bCr = boxBlur(bCr, w, h, rad);
+  for (let i = 0, j = 0; j < n; i += 4, j++) {
+    let m = (115 - Y[j]) / 35; // solo zonas oscuras
+    if (m <= 0) continue; if (m > 1) m = 1;
+    const dev = Math.abs(Cb[j] - bCb[j]) + Math.abs(Cr[j] - bCr[j]);
+    if (dev > 22) continue;            // detalle de color real (estampado)
+    if (dev > 12) m *= (22 - dev) / 10;
+    m *= 0.85;
+    const cb = Cb[j] * (1 - m) + bCb[j] * m, cr = Cr[j] * (1 - m) + bCr[j] * m, y = Y[j];
+    d[i] = y + 1.402 * cr;
+    d[i + 1] = y - 0.34414 * cb - 0.71414 * cr;
+    d[i + 2] = y + 1.772 * cb;
+  }
 }
 
 function sharpen(img, w, h, amount) {
@@ -167,6 +218,7 @@ export async function render(bitmap, adj = DEFAULT_ADJ, maxSide = 1400) {
     }
     d[i] = r; d[i + 1] = g; d[i + 2] = b;
   }
+  if (adj.auto) cleanBlotches(img, ow, oh);
   sharpen(img, ow, oh, adj.sharpen);
   ctx.putImageData(img, 0, 0);
 
