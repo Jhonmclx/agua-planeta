@@ -1137,5 +1137,7 @@ export default [
   ]
  },
  {"id":"chaquetas-estado-2026-10-09","patch":{"refPrefix":"CH-","set":{"condition":"buen-estado"},"onlyIfEmpty":true}},
- {"id":"ch-004-cafe-2026-10-09","patch":{"refPrefix":"CH-004","set":{"name":"Chaqueta café acolchada","colors":["Café"],"description":"Chaqueta café oscuro con paneles acolchados, cuello alto y cierre frontal.","photos":["/import/ch-004-v2.jpg"]}}}
+ {"id":"ch-004-cafe-2026-10-09","patch":{"refPrefix":"CH-004","set":{"name":"Chaqueta café acolchada","colors":["Café"],"description":"Chaqueta café oscuro con paneles acolchados, cuello alto y cierre frontal.","photos":["/import/ch-004-v2.jpg"]}}},
+ {"id":"ch-004-revertir-2026-10-09","patch":{"refPrefix":"CH-004","set":{"name":"Chaqueta marrón con paneles acolchados","colors":["Café"],"description":"Chaqueta marrón oscuro con paneles acolchados, cuello alto y cierre frontal.","photos":["/import/ch-004.jpg"]}}},
+ {"id":"ch-039-cafe-2026-10-09","patch":{"refPrefix":"CH-039","set":{"name":"Chaqueta café acolchada en rombos","colors":["Café"],"description":"Chaqueta café oscuro acolchada con costuras en rombos, cuello alto y cierre frontal.","photos":["/import/ch-039-v2.jpg"]}}}
 ];
