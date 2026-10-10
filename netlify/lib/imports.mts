@@ -1136,5 +1136,6 @@ export default [
    }
   ]
  },
- {"id":"chaquetas-estado-2026-10-09","patch":{"refPrefix":"CH-","set":{"condition":"buen-estado"},"onlyIfEmpty":true}}
+ {"id":"chaquetas-estado-2026-10-09","patch":{"refPrefix":"CH-","set":{"condition":"buen-estado"},"onlyIfEmpty":true}},
+ {"id":"ch-004-cafe-2026-10-09","patch":{"refPrefix":"CH-004","set":{"name":"Chaqueta café acolchada","colors":["Café"],"description":"Chaqueta café oscuro con paneles acolchados, cuello alto y cierre frontal.","photos":["/import/ch-004-v2.jpg"]}}}
 ];
