@@ -23,6 +23,8 @@ type Product = {
   colors?: string[];
   condition?: string;
   measures?: string;
+  photoFixed?: boolean;
+  origPhoto?: string;
   createdAt: number;
   updatedAt?: number;
 };
@@ -171,6 +173,8 @@ function cleanProduct(input: any, existing?: Product): Product {
     colors: Array.isArray(input.colors) ? [...new Set(input.colors.map((c: any) => str(c, 24)).filter(Boolean))].slice(0, 12) : existing?.colors || [],
     condition: ["nuevo", "como-nuevo", "buen-estado"].includes(input.condition) ? input.condition : "",
     measures: str(input.measures, 300),
+    photoFixed: !!input.photoFixed,
+    origPhoto: str(input.origPhoto, 300),
     createdAt: existing?.createdAt || Date.now(),
     updatedAt: Date.now(),
   };

@@ -201,8 +201,9 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
       <div class="tools">
         <input id="fq" placeholder="Buscar por nombre o referencia…">
         <select id="fcat"></select>
-        <select id="fst"><option value="">Todos</option><option value="available">Disponibles</option><option value="sold">Vendidos</option><option value="hidden">Ocultos</option><option value="noprice">Sin precio</option><option value="offer">En oferta</option><option value="new">Marcadas como nuevas</option></select>
+        <select id="fst"><option value="">Todos</option><option value="available">Disponibles</option><option value="sold">Vendidos</option><option value="hidden">Ocultos</option><option value="noprice">Sin precio</option><option value="offer">En oferta</option></select>
         <button class="btn r" id="newBtn">＋ Nueva prenda</button>
+        <button class="btn g" id="fixBtn">✨ Arreglar fotos</button>
       </div>
       <div class="list" id="plist"><div class="empty">Cargando…</div></div>
     </section>
@@ -263,6 +264,21 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
   <div class="sticky-save" id="bulkBar"><div class="in"><b id="bulkInfo"></b><div class="progress" id="bulkProg" hidden><i></i></div><button class="btn g" id="bulkClear">Vaciar</button><button class="btn r" id="bulkSave">Publicar todo</button></div></div>
 </div>
 
+<!-- arreglar fotos en bloque -->
+<div class="ov" id="fxOv"><div class="md">
+  <div class="md-h"><h3>Arreglar fotos</h3><button class="x" data-close="fxOv">✕</button></div>
+  <div class="md-b">
+    <div class="help">Quita la pared, el gancho y el soporte de la <b>foto principal</b> de cada prenda y la pone sobre un fondo limpio, centrada y con sombra suave. Se hace en este equipo con inteligencia artificial.</div>
+    <div class="note" style="background:#fff6dd;border-radius:10px;padding:10px 12px;font-size:13px">Mejor hacerlo en el <b>computador con wifi</b>: la primera vez descarga la herramienta (unos 40 MB) y luego tarda unos segundos por foto. No cierres esta ventana mientras trabaja.</div>
+    <div class="f"><label>Fondo</label><select id="fxBg" class="in"></select></div>
+    <div class="f"><label>¿Cuáles?</label><select id="fxWhich" class="in"><option value="pending">Solo las que no se han arreglado</option><option value="visible">Solo las que ya tienen precio</option></select></div>
+    <div class="help" id="fxInfo"></div>
+    <div class="progress" id="fxProg" hidden><i></i></div>
+    <div class="help" id="fxStatus"></div>
+  </div>
+  <div class="md-f"><button class="btn g" data-close="fxOv">Cerrar</button><button class="btn p" id="fxGo">Empezar</button></div>
+</div></div>
+
 <!-- ayuda del panel -->
 <div class="ov" id="hOv"><div class="md">
   <div class="md-h"><h3>Ayuda del panel</h3><button class="x" data-close="hOv">✕</button></div>
@@ -292,7 +308,6 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
       <li>Para quitarla, toca otra vez <b>Oferta</b>.</li>
     </ol></div>
     <div><h4>Otros atajos</h4><ol>
-      <li><b>Nuevo</b>: muestra la etiqueta "Nuevo" en la tienda.</li>
       <li><b>Ocultar</b>: la quita de la tienda sin borrarla.</li>
       <li><b>Duplicar</b>: crea una copia para subir rápido una prenda parecida.</li>
     </ol></div>
@@ -335,7 +350,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
     </div>
     <div class="f"><label>Descripción</label><textarea id="pDesc" rows="3" placeholder="Material, detalles, cómo le queda…"></textarea></div>
     <div class="f"><label>Estado</label><div class="seg" id="pStatus"><button data-s="available">Disponible</button><button data-s="sold">Agotada</button><button data-s="hidden">Oculta</button></div></div>
-    <label class="switch"><input type="checkbox" id="pNew"> Mostrar etiqueta "Nuevo"</label>
+    <input type="checkbox" id="pNew" hidden>
     <label class="switch"><input type="checkbox" id="pFeat"> Destacar al inicio</label>
   </div>
   <div class="md-f"><button class="btn g" id="pDel">Eliminar</button><button class="btn p" id="pSave">Guardar</button></div>
@@ -470,7 +485,6 @@ function renderProducts(){
       </div>
       <div class="toggles">
         <button class="tg ${sold?"on red":""}" data-tg="sold" data-id="${p.id}">${sold?"✓ Agotado":"Agotado"}</button>
-        <button class="tg ${p.isNew?"on aqua":""}" data-tg="new" data-id="${p.id}">${p.isNew?"✓ Nuevo":"Nuevo"}</button>
         <button class="tg ${isOffer(p)?"on red":""}" data-tg="offer" data-id="${p.id}">${isOffer(p)?"✓ Oferta":"Oferta"}</button>
         <button class="tg ${p.status==="hidden"?"on":""}" data-tg="hide" data-id="${p.id}">${p.status==="hidden"?"✓ Oculta":"Ocultar"}</button>
         <button class="tg" data-tg="dup" data-id="${p.id}">Duplicar</button>
@@ -726,6 +740,48 @@ $("#pDel").onclick = async () => {
   catch(e){ if (e.message!=="401") toast(e.message); }
 };
 $("#newBtn").onclick = () => openEditor(null);
+// ---------- arreglar fotos en bloque ----------
+// Las fotos de las fichas traen el logo pegado: para recortar se usa la misma foto sin logo.
+async function stripOldLogo(bmp, url){
+  // usar la versión de la foto sin logo, si existe
+  const m = url.match(/^\/import\/(ch-\d{3})(?:-v\d+)?\.jpg$/);
+  if (!m) return bmp;
+  try { return await loadBitmap(`/import/raw/${m[1]}.jpg`); } catch(e){ return bmp; }
+}
+let FX_RUN = false;
+function fxList(){
+  const which = $("#fxWhich").value;
+  return PRODUCTS.filter(p => p.photos && p.photos[0] && !p.photoFixed && (which!=="visible" || p.price>0));
+}
+function fxRefresh(){ const n = fxList().length; $("#fxInfo").textContent = n ? `${n} prenda${n===1?"":"s"} por arreglar.` : "No hay fotos pendientes."; $("#fxGo").disabled = !n || FX_RUN; }
+$("#fixBtn").onclick = () => {
+  $("#fxBg").innerHTML = Object.entries(BACKGROUNDS).map(([k,v])=>`<option value="${k}" ${k==="studio"?"selected":""}>${v.label}</option>`).join("");
+  $("#fxStatus").textContent = ""; fxRefresh(); $("#fxOv").classList.add("on");
+};
+$("#fxWhich").onchange = fxRefresh;
+$("#fxGo").onclick = async () => {
+  const list = fxList(); if (!list.length) return;
+  FX_RUN = true; $("#fxGo").disabled = true;
+  const bar = $("#fxProg"), st = $("#fxStatus"); bar.hidden = false; bar.firstElementChild.style.width = "0%";
+  let ok = 0, fail = 0;
+  for (let i = 0; i < list.length; i++){
+    const p = list[i];
+    st.textContent = `Arreglando ${p.ref} (${i+1} de ${list.length})…`;
+    try{
+      const bitmap = await stripOldLogo(await loadBitmap(p.photos[0]), p.photos[0]);
+      const item = { bitmap, adj:{...DEFAULT_ADJ, watermark: SETTINGS.watermark !== false} };
+      await applyBg(item, $("#fxBg").value, (k,c,t)=>{ if (t) st.textContent = `Preparando la herramienta (${Math.round(c/t*100)}%)… solo la primera vez`; });
+      const canvas = await render(sourceFor(item, item.adj), item.adj, 1400);
+      const blob = await toBlob(canvas, .88);
+      const up = await api("upload", {method:"POST", body: blob, headers:{"content-type":"image/jpeg"}});
+      const d = await api("admin/products/"+p.id, {method:"PUT", body: JSON.stringify({photos:[up.url, ...p.photos.slice(1)], photoFixed:true, origPhoto:p.photos[0]})});
+      PRODUCTS = PRODUCTS.map(x=>x.id===p.id?d.product:x); ok++;
+    }catch(err){ console.error(p.ref, err); fail++; if (String(err.message)==="401") break; }
+    bar.firstElementChild.style.width = ((i+1)/list.length*100)+"%";
+  }
+  FX_RUN = false; renderProducts(); fxRefresh();
+  st.textContent = `Listo: ${ok} foto${ok===1?"":"s"} arreglada${ok===1?"":"s"}` + (fail?` · ${fail} no se pudieron (revisa la conexión y vuelve a intentar)`:"") + ".";
+};
 $("#helpOpen").onclick = () => $("#hOv").classList.add("on");
 $$("[data-close]").forEach(b => b.addEventListener("click", () => $("#"+b.dataset.close).classList.remove("on")));
 

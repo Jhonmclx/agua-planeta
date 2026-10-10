@@ -420,7 +420,7 @@ function tagHtml(p){
 }
 function badges(p){
   if (p.soldOut) return `<span class="badge out">Agotado</span>`;
-  return [isNew(p)?`<span class="badge new">Nuevo</span>`:"", onSale(p)?`<span class="badge sale">Oferta -${Math.round((1-p.price/p.oldPrice)*100)}%</span>`:"", p.lowStock?`<span class="badge low">Últimas unidades</span>`:""].join("");
+  return [onSale(p)?`<span class="badge sale">Oferta -${Math.round((1-p.price/p.oldPrice)*100)}%</span>`:"", p.lowStock?`<span class="badge low">Últimas unidades</span>`:""].join("");
 }
 function render(){
   const list = filtered();

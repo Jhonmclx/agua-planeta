@@ -254,17 +254,83 @@ export async function removeBg(bitmap, onProgress) {
     output: { format: "image/png" },
     progress: (key, cur, total) => onProgress && onProgress(key, cur, total),
   });
-  const cutout = await createImageBitmap(out);
+  const raw = await createImageBitmap(out);
+  const m = document.createElement("canvas"); m.width = raw.width; m.height = raw.height;
+  const mctx = m.getContext("2d", { willReadFrequently: true }); mctx.drawImage(raw, 0, 0);
+  const img = mctx.getImageData(0, 0, m.width, m.height);
+  removeThinParts(img, m.width, m.height); // quita gancho, base metálica, logos sueltos
+  mctx.putImageData(img, 0, 0);
+  const cutout = m;
   // caja que encierra la prenda (para centrarla)
-  const m = document.createElement("canvas"); m.width = cutout.width; m.height = cutout.height;
-  const mctx = m.getContext("2d", { willReadFrequently: true }); mctx.drawImage(cutout, 0, 0);
-  const a = mctx.getImageData(0, 0, m.width, m.height).data;
+  const a = img.data;
   let x0 = m.width, y0 = m.height, x1 = 0, y1 = 0;
   for (let y = 0; y < m.height; y += 2) for (let x = 0; x < m.width; x += 2) {
     if (a[(y * m.width + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
   }
   if (x1 <= x0 || y1 <= y0) throw new Error("No se encontró la prenda en la foto");
   return { cutout, bbox: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 } };
+}
+
+// Borra partes delgadas pegadas a la prenda (gancho, varilla del soporte) y
+// manchas sueltas, dejando solo el cuerpo principal de la prenda.
+function minMax1D(src, dst, w, h, r, isMax, horizontal) {
+  const len = horizontal ? w : h, lines = horizontal ? h : w;
+  for (let l = 0; l < lines; l++) {
+    for (let i = 0; i < len; i++) {
+      let v = isMax ? 0 : 255;
+      const a0 = Math.max(0, i - r), a1 = Math.min(len - 1, i + r);
+      for (let k = a0; k <= a1; k++) {
+        const idx = horizontal ? l * w + k : k * w + l;
+        const x = src[idx];
+        if (isMax ? x > v : x < v) { v = x; if (isMax ? v === 255 : v === 0) break; }
+      }
+      dst[horizontal ? l * w + i : i * w + l] = v;
+    }
+  }
+}
+function morph(mask, w, h, r, isMax) {
+  const t = new Uint8Array(mask.length), o = new Uint8Array(mask.length);
+  minMax1D(mask, t, w, h, r, isMax, true); minMax1D(t, o, w, h, r, isMax, false);
+  return o;
+}
+export function removeThinParts(img, W, H) {
+  const sc = Math.min(1, 480 / Math.max(W, H));
+  const w = Math.max(1, Math.round(W * sc)), h = Math.max(1, Math.round(H * sc));
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const t = document.createElement("canvas"); t.width = W; t.height = H;
+  t.getContext("2d").putImageData(img, 0, 0);
+  const cx = c.getContext("2d", { willReadFrequently: true }); cx.drawImage(t, 0, 0, w, h);
+  const small = cx.getImageData(0, 0, w, h).data;
+  let mask = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) mask[i] = small[i * 4 + 3] > 60 ? 255 : 0;
+  const r = Math.max(4, Math.round(Math.max(w, h) * 0.022));
+  mask = morph(morph(mask, w, h, r, false), w, h, r, true); // apertura: borra lo delgado
+  // conservar solo la pieza más grande (la prenda)
+  const lab = new Int32Array(w * h).fill(-1); let best = -1, bestN = 0, id = 0;
+  const q = new Int32Array(w * h);
+  for (let s = 0; s < w * h; s++) {
+    if (!mask[s] || lab[s] >= 0) continue;
+    let qh = 0, qt = 0, n = 0; q[qt++] = s; lab[s] = id;
+    while (qh < qt) {
+      const p = q[qh++]; n++; const x = p % w, y = (p / w) | 0;
+      if (x > 0 && mask[p - 1] && lab[p - 1] < 0) { lab[p - 1] = id; q[qt++] = p - 1; }
+      if (x < w - 1 && mask[p + 1] && lab[p + 1] < 0) { lab[p + 1] = id; q[qt++] = p + 1; }
+      if (y > 0 && mask[p - w] && lab[p - w] < 0) { lab[p - w] = id; q[qt++] = p - w; }
+      if (y < h - 1 && mask[p + w] && lab[p + w] < 0) { lab[p + w] = id; q[qt++] = p + w; }
+    }
+    if (n > bestN) { bestN = n; best = id; }
+    id++;
+  }
+  for (let i = 0; i < w * h; i++) mask[i] = lab[i] === best ? 255 : 0;
+  mask = morph(mask, w, h, 2, true);
+  // llevar la máscara al tamaño real y aplicarla al recorte
+  const md = cx.createImageData(w, h);
+  for (let i = 0; i < w * h; i++) { md.data[i * 4 + 3] = mask[i]; }
+  cx.clearRect(0, 0, w, h); cx.putImageData(md, 0, 0);
+  const big = document.createElement("canvas"); big.width = W; big.height = H;
+  const bx = big.getContext("2d", { willReadFrequently: true }); bx.imageSmoothingQuality = "high"; bx.drawImage(c, 0, 0, W, H);
+  const bm = bx.getImageData(0, 0, W, H).data, d = img.data;
+  for (let i = 3; i < d.length; i += 4) d[i] = (d[i] * bm[i]) / 255;
 }
 
 // Pone la prenda recortada sobre un fondo limpio, centrada y con sombra suave
